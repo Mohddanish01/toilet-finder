@@ -57,3 +57,36 @@ export const getNearbyToilets = async (req, res) => {
     });
   }
 };
+
+export const getToiletById = async (req, res) => {
+  try {
+    const toilet = await Toilet.findById(req.params.id);
+
+    if (!toilet) {
+      return res.status(404).json({
+        message: "Toilet not found"
+      });
+    }
+
+    res.status(200).json(toilet);
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
+  }
+};
+
+export const getAllToilets = async (req, res) => {
+  try {
+    const toilets = await Toilet.find()
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(toilets);
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
+  }
+};

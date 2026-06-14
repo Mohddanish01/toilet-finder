@@ -35,3 +35,17 @@ export const addReview = async (req, res) => {
     });
   }
 };
+
+export const getReviewsByToiletId = async (req, res) => {
+  try {
+    const reviews = await Review.find({
+      toilet_id: req.params.toiletId
+    }).sort({ createdAt: -1 });
+
+    res.status(200).json(reviews);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
+  }
+};
