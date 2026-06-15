@@ -1,9 +1,17 @@
 import express from "express";
 import { addToilet, getNearbyToilets, getToiletById, getAllToilets} from "../controllers/toiletController.js";
+import { createToiletValidation } from "../validations/toiletValidation.js";
+import { validate } from "../middlewares/validate.js";
 
 const router = express.Router();
 
-router.post("/", addToilet);
+// router.post("/", addToilet);
+router.post(
+  "/",
+  createToiletValidation,
+  validate,
+  addToilet
+);
 router.get("/", getAllToilets);
 router.get("/nearby", getNearbyToilets);
 router.get("/:id", getToiletById);
