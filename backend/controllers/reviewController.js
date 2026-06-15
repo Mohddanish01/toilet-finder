@@ -7,6 +7,7 @@ export const addReview = async (req, res) => {
 
     const review = await Review.create({
       toilet_id,
+      user_id: req.user._id,
       rating,
       comment
     });
