@@ -1,5 +1,5 @@
 import express from "express";
-import { addReview, getReviewsByToiletId} from "../controllers/reviewController.js";
+import { addReview, getReviewsByToiletId, updateReview, deleteReview} from "../controllers/reviewController.js";
 import { createReviewValidation } from "../validations/reviewValidation.js";
 import { validate } from "../middlewares/validate.js";
 import { protect } from "../middlewares/authMiddleware.js";
@@ -14,6 +14,11 @@ router.post(
   validate,
   addReview
 );
+
 router.get("/:toiletId", getReviewsByToiletId);
+
+router.put("/:id", protect, updateReview);
+
+router.delete("/:id", protect, deleteReview);
 
 export default router;

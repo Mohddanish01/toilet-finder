@@ -12,13 +12,14 @@ export const addToilet = async (req, res) => {
       );
     }
 
-    const newToilet = await Toilet.create({
+    const newToilet = new Toilet({
       name,
       location: {
         type: "Point",
         coordinates: [lng, lat]
       },
-      address
+      address,
+      created_by: req.user._id
     });
 
     await newToilet.save();

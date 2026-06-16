@@ -2,12 +2,13 @@ import express from "express";
 import { addToilet, getNearbyToilets, getToiletById, getAllToilets} from "../controllers/toiletController.js";
 import { createToiletValidation } from "../validations/toiletValidation.js";
 import { validate } from "../middlewares/validate.js";
-
+import { protect } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 // router.post("/", addToilet);
 router.post(
   "/",
+  protect,
   createToiletValidation,
   validate,
   addToilet
