@@ -3,6 +3,7 @@ import connectDB from "./config/db.js";
 import toiletRoutes from "./routes/toiletRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import demandRoutes from "./routes/demandRoutes.js";
 import dotenv from "dotenv";
 dotenv.config();
 const app = express();
@@ -15,6 +16,7 @@ connectDB();
 app.use("/api/toilets", toiletRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/demands",demandRoutes);
 
 
 // app.get("/", (req, res) => {

@@ -1,18 +1,46 @@
 import mongoose from "mongoose";
 
-const demandSchema = new mongoose.Schema({
+const demandSchema = new mongoose.Schema(
+{
   location: {
     type: {
       type: String,
+      enum: ["Point"],
       default: "Point"
     },
-    coordinates: [Number]
+    coordinates: {
+      type: [Number],
+      required: true
+    }
   },
 
-  votes: { type: Number, default: 1 }
+  votes: {
+    type: Number,
+    default: 1
+  },
 
-}, { timestamps: true });
+  created_by: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
+  },
 
-demandSchema.index({ location: "2dsphere" });
+  votedBy: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    }
+  ]
 
-export default mongoose.model("Demand", demandSchema);
+},
+{
+  timestamps: true
+});
+
+demandSchema.index({
+  location: "2dsphere"
+});
+
+export default mongoose.model(
+  "Demand",
+  demandSchema
+);
