@@ -16,6 +16,7 @@ app.use("/api/toilets", toiletRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/auth", authRoutes);
 
+
 // app.get("/", (req, res) => {
 //   res.send("API Running");
 // });
