@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import connectDB from "./config/db.js";
 import toiletRoutes from "./routes/toiletRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
@@ -7,6 +8,9 @@ import demandRoutes from "./routes/demandRoutes.js";
 import dotenv from "dotenv";
 dotenv.config();
 const app = express();
+
+app.use(cors());
+
 const PORT = process.env.PORT || 5000
 
 app.use(express.json());

@@ -8,8 +8,8 @@ function Login() {
   const handleLogin = async () => {
 
     await login(
-      "your_email@gmail.com",
-      "your_password"
+      "danish@gmail.com",
+      "123456"
     );
   };
 
