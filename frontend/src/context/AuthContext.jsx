@@ -6,6 +6,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
 
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const login = async (
     email,
@@ -33,15 +34,16 @@ export const AuthProvider = ({ children }) => {
 
     const loadUser = async () => {
 
-      const token =
-        localStorage.getItem("token");
+      const token = localStorage.getItem("token");
 
-      if (!token) return;
+      if (!token) {
+        setLoading(false);
+        return;
+      }
 
       try {
 
-        const res =
-          await api.get("/auth/me");
+        const res = await api.get("/auth/me");
 
         setUser(res.data.user);
 
@@ -49,9 +51,11 @@ export const AuthProvider = ({ children }) => {
 
         console.log(error);
 
-        localStorage.removeItem(
-          "token"
-        );
+        localStorage.removeItem("token");
+
+      } finally {
+
+        setLoading(false);
       }
     };
 
@@ -64,7 +68,8 @@ export const AuthProvider = ({ children }) => {
       value={{
         user,
         setUser, 
-        login
+        login,
+        loading
       }}
     >
       {children}

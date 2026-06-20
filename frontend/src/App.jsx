@@ -6,6 +6,7 @@ import Signup from "./pages/Signup";
 import AddToilet from "./pages/AddToilet";
 import ToiletDetails from "./pages/ToiletDetails";
 import MyDemands from "./pages/MyDemands";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
   return (
@@ -18,7 +19,14 @@ function App() {
 
         <Route path="/signup" element={<Signup />} />
 
-        <Route path="/add-toilet" element={<AddToilet />} />
+        <Route
+          path="/add-toilet"
+          element={
+            <ProtectedRoute>
+              <AddToilet />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/toilet/:id"
@@ -27,7 +35,11 @@ function App() {
 
         <Route
           path="/my-demands"
-          element={<MyDemands />}
+          element={
+            <ProtectedRoute>
+              <MyDemands />
+            </ProtectedRoute>
+          }
         />
 
       </Routes>
