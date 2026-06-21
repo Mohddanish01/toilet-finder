@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const login = async (
+  const login = async ( // for login
     email,
     password
   ) => {
@@ -29,6 +29,32 @@ export const AuthProvider = ({ children }) => {
     setUser(res.data);
     console.log(localStorage.getItem("token"));
   };
+
+
+  const signup = async ( // sign up
+    name,
+    email,
+    password
+  ) => {
+
+    await api.post(
+      "/auth/signup",
+      {
+        name,
+        email,
+        password
+      }
+    );
+  };
+
+
+  const logout = () => {  // for logout
+
+    localStorage.removeItem("token");
+
+    setUser(null);
+  };
+
 
   useEffect(() => {
 
@@ -69,6 +95,8 @@ export const AuthProvider = ({ children }) => {
         user,
         setUser, 
         login,
+        signup,
+        logout,
         loading
       }}
     >

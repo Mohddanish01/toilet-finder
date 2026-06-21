@@ -1,14 +1,26 @@
-import { useAuth }
-from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 
 function Home() {
 
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <div>
+
       <h1>Home Page</h1>
-      <p>{user ? user.name : "Guest"}</p>
+
+      <h2>
+        {user
+          ? `Welcome ${user.name}`
+          : "Guest"}
+      </h2>
+
+      {user && (
+        <button onClick={logout}>
+          Logout
+        </button>
+      )}
+
     </div>
   );
 }
