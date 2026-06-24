@@ -1,5 +1,6 @@
 import Review from "../models/Review.js";
 import Toilet from "../models/Toilet.js";
+import updateToiletRating from "../utils/updateToiletRating.js";
 
 export const addReview = async (req, res) => {
   try {
@@ -135,7 +136,9 @@ export const deleteReview = async (
 
     await review.deleteOne();
 
-    await updateToiletRating(toiletId);
+    await updateToiletRating(
+      review.toilet_id
+    );
 
     res.status(200).json({
       message: "Review deleted successfully"

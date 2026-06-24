@@ -7,10 +7,14 @@ import AddToilet from "./pages/AddToilet";
 import ToiletDetails from "./pages/ToiletDetails";
 import MyDemands from "./pages/MyDemands";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <BrowserRouter>
+    
+      <Navbar />
+
       <Routes>
 
         <Route path="/" element={<Home />} />
