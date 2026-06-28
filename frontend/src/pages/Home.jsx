@@ -31,6 +31,7 @@ import { useEffect, useState } from "react";
 import api from "../api/axios";
 import ToiletCard from "../components/ToiletCard";
 import DemandCard from "../components/DemandCard";
+import MapView from "../components/MapView";
 
 function Home() {
 
@@ -76,6 +77,11 @@ function Home() {
 
   return (
     <div>
+
+      <MapView
+        toilets={toilets}
+        demands={demands}
+      />
 
       <h1>All Toilets</h1>
 
