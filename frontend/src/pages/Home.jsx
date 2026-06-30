@@ -1,59 +1,86 @@
-// import { useAuth } from "../context/AuthContext";
 
-// function Home() {
-
-//   const { user, logout } = useAuth();
-
-//   return (
-//     <div>
-
-//       <h1>Home Page</h1>
-
-//       <h2>
-//         {user
-//           ? `Welcome ${user.name}`
-//           : "Guest"}
-//       </h2>
-
-//       {user && (
-//         <button onClick={logout}>
-//           Logout
-//         </button>
-//       )}
-
-//     </div>
-//   );
-// }
-
-// export default Home;
 
 import { useEffect, useState } from "react";
 import api from "../api/axios";
 import ToiletCard from "../components/ToiletCard";
 import DemandCard from "../components/DemandCard";
 import MapView from "../components/MapView";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
 
   const [toilets, setToilets] = useState([]);
   const [demands, setDemands] = useState([]);
+  const [position, setPosition] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
 
-    const fetchToilets = async () => {
+    navigator.geolocation.getCurrentPosition(
+
+      (pos) => {
+
+        setPosition({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude
+        });
+
+      },
+
+      (err) => {
+
+        console.log(err);
+
+      }
+
+    );
+
+  }, []);
+
+  useEffect(() => {
+
+    if (!position) return;
+
+    const fetchNearbyToilets = async () => {
 
       try {
 
-        const res =
-          await api.get("/toilets");
+        const res = await api.get(
+
+          `/toilets/nearby?lat=${position.lat}&lng=${position.lng}`
+
+        );
 
         setToilets(res.data);
 
       } catch (error) {
 
         console.log(error);
+
       }
+
     };
+
+    fetchNearbyToilets();
+
+  }, [position]);
+
+  useEffect(() => {
+
+    // const fetchToilets = async () => {
+
+    //   try {
+
+    //     const res =
+    //       await api.get("/toilets");
+
+    //     setToilets(res.data);
+
+    //   } catch (error) {
+
+    //     console.log(error);
+    //   }
+    // };
 
     const fetchDemands = async () => {
 
@@ -70,7 +97,7 @@ function Home() {
       }
     };
 
-    fetchToilets();
+    // fetchToilets();
     fetchDemands();
 
   }, []);
@@ -83,32 +110,42 @@ function Home() {
         demands={demands}
       />
 
-      <h1>All Toilets</h1>
+      <h1>Nearby Public Toilets</h1>
 
-      {/* {toilets.map((toilet) => (
+      {
+        toilets.length === 0 ? (
 
-        <div key={toilet._id}>
+          <div>
 
-          <h3>
-            {toilet.name}
-          </h3>
+            <h3>
+              🚻 No public toilets found within 5 km.
+            </h3>
 
-          <p>
-            {toilet.address}
-          </p>
+            <p>
+              You can help your area by creating a toilet demand.
+            </p>
+            
+            <button
+              onClick={() => navigate("/my-demands")}
+            >
+              🚩 Request a Toilet
+            </button>
 
-        </div>
+          </div>
 
-      ))} */}
+        ) : (
 
-      {toilets.map((toilet) => (
+          toilets.map((toilet) => (
 
-        <ToiletCard
-          key={toilet._id}
-          toilet={toilet}
-        />
+            <ToiletCard
+              key={toilet._id}
+              toilet={toilet}
+            />
 
-      ))}
+          ))
+
+        )
+      }
 
       <h1>Toilet Demands</h1>
 
