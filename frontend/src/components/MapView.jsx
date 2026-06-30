@@ -5,10 +5,12 @@ import {
   TileLayer,
   Marker,
   Popup,
-  useMap
+  useMap,
+  useMapEvents
 } from "react-leaflet";
 
 import { Link } from "react-router-dom";
+import { useLocation } from "../context/LocationContext";
 
 import L from "leaflet";
 import "leaflet.awesome-markers";
@@ -44,12 +46,93 @@ function ChangeMapView({ center }) {
   return null;
 }
 
+const fetchAddress = async (
+  lat,
+  lng,
+  setSelectedLocation
+) => {
+
+  console.log("Fetching Address...");
+  try {
+
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+    );
+
+    const data = await res.json();
+    console.log(data);
+
+    const addr = data.address;
+
+    const road =
+      addr.road ||
+      addr.neighbourhood ||
+      addr.suburb ||
+      addr.hamlet ||
+      "";
+
+    const village =
+      addr.village ||
+      addr.town ||
+      addr.city ||
+      "";
+
+    const district =
+      addr.county ||
+      addr.state_district ||
+      "";
+
+    const state =
+      addr.state || "";
+
+    setSelectedLocation({
+      lat,
+      lng,
+      address: [road, village, district, state]
+    .filter(Boolean)
+    .join(", ")
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
+};
+
+function MapClickHandler({ setSelectedLocation }) {  // coordinates autofill ke liye
+
+  useMapEvents({
+
+    click(e) {
+
+      console.log("Latitude:", e.latlng.lat);
+      console.log("Longitude:", e.latlng.lng);
+
+      fetchAddress(
+        e.latlng.lat,
+        e.latlng.lng,
+        setSelectedLocation
+      );
+
+    }
+
+  });
+
+  return null;
+}
+
+
 function MapView({ toilets, demands }) {
 
   const [position, setPosition] = useState([
     28.6139,
     77.2090
   ]);
+
+  // const [selectedPosition, setSelectedPosition] = useState(null);
+
+  const { selectedLocation, setSelectedLocation } = useLocation();
 
   useEffect(() => {   // current location ke liye
 
@@ -91,6 +174,10 @@ function MapView({ toilets, demands }) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
+        <MapClickHandler
+          setSelectedLocation={setSelectedLocation}
+        />
+
         <ChangeMapView
           center={position}
         />
@@ -107,6 +194,27 @@ function MapView({ toilets, demands }) {
           </Popup>
 
         </Marker>
+
+        {
+          selectedLocation  && (
+
+            <Marker
+              position={[
+                selectedLocation.lat,
+                selectedLocation.lng
+              ]}
+            >
+
+              <Popup>
+
+                Selected Location
+
+              </Popup>
+
+            </Marker>
+
+          )
+        }
 
         {  // toilet show krega
           toilets.map((toilet) => (

@@ -5,11 +5,18 @@ import { AuthProvider } from "./context/AuthContext";
 import "leaflet/dist/leaflet.css";
 import "leaflet.awesome-markers/dist/leaflet.awesome-markers.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import {LocationProvider} from "./context/LocationContext";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
+    <LocationProvider>
+
+        <AuthProvider>
+
+            <App/>
+
+        </AuthProvider>
+
+    </LocationProvider>
   </StrictMode>,
 )
