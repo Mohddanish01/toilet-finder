@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { useLocation } from "../context/LocationContext";
 import MapPicker from "../components/MapPicker";
+import ToiletForm from "../components/ToiletForm";
 
 function AddToilet() {
 
@@ -10,6 +11,17 @@ function AddToilet() {
   const [address, setAddress] = useState("");
   const [lat, setLat] = useState("");
   const [lng, setLng] = useState("");
+  const [facilities, setFacilities] = useState({
+    male: false,
+    female: false,
+    wheelchair: false,
+    drinkingWater: false,
+    tissue: false
+  });
+
+  const [isFree, setIsFree] = useState(true);
+
+  const [openingHours, setOpeningHours] = useState("24 Hours");
 
   const {selectedLocation, setSelectedLocation} = useLocation();
   console.log("Selected Location:",selectedLocation);
@@ -198,7 +210,10 @@ function AddToilet() {
           name,
           address,
           lat: Number(lat),
-          lng: Number(lng)
+          lng: Number(lng),
+          facilities,
+          isFree,
+          openingHours
         }
       );
 
@@ -221,6 +236,8 @@ function AddToilet() {
     <div>
 
       <h1>Add Toilet</h1>
+
+      <ToiletForm />
 
       <form onSubmit={handleSubmit}>
 
@@ -283,6 +300,123 @@ function AddToilet() {
           value={lng}
           onChange={(e) =>
             setLng(e.target.value)
+          }
+        />
+
+        <br /><br />
+
+        <h3>Facilities</h3>
+
+        <label>
+          <input
+            type="checkbox"
+            checked={facilities.male}
+            onChange={(e) =>
+              setFacilities({
+                ...facilities,
+                male: e.target.checked
+              })
+            }
+          />
+          Male Toilet
+        </label>
+
+        <br />
+
+        <label>
+          <input
+            type="checkbox"
+            checked={facilities.female}
+            onChange={(e) =>
+              setFacilities({
+                ...facilities,
+                female: e.target.checked
+              })
+            }
+          />
+          Female Toilet
+        </label>
+
+        <br />
+
+        <label>
+          <input
+            type="checkbox"
+            checked={facilities.wheelchair}
+            onChange={(e) =>
+              setFacilities({
+                ...facilities,
+                wheelchair: e.target.checked
+              })
+            }
+          />
+          Wheelchair Accessible
+        </label>
+
+        <br />
+
+        <label>
+          <input
+            type="checkbox"
+            checked={facilities.drinkingWater}
+            onChange={(e) =>
+              setFacilities({
+                ...facilities,
+                drinkingWater: e.target.checked
+              })
+            }
+          />
+          Drinking Water
+        </label>
+
+        <br />
+
+        <label>
+          <input
+            type="checkbox"
+            checked={facilities.tissue}
+            onChange={(e) =>
+              setFacilities({
+                ...facilities,
+                tissue: e.target.checked
+              })
+            }
+          />
+          Tissue Available
+        </label>
+
+        <br /><br />
+
+        <h3>Pricing</h3>
+
+        <label>
+          <input
+            type="radio"
+            checked={isFree}
+            onChange={() => setIsFree(true)}
+          />
+          Free
+        </label>
+
+        <label
+          style={{ marginLeft: "20px" }}
+        >
+          <input
+            type="radio"
+            checked={!isFree}
+            onChange={() => setIsFree(false)}
+          />
+          Paid
+        </label>
+
+        <br /><br />
+
+        <input
+          type="text"
+          placeholder="Opening Hours"
+          value={openingHours}
+          onChange={(e) =>
+            setOpeningHours(e.target.value)
           }
         />
 

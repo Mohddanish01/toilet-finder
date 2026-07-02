@@ -11,6 +11,7 @@ import {
 
 import { Link } from "react-router-dom";
 import { useLocation } from "../context/LocationContext";
+import { getDistance } from "../utils/distance";
 
 import L from "leaflet";
 import "leaflet.awesome-markers";
@@ -123,46 +124,22 @@ function MapClickHandler({ setSelectedLocation }) {  // coordinates autofill ke 
 }
 
 
-function MapView({ toilets, demands }) {
-
-  const [position, setPosition] = useState([
-    28.6139,
-    77.2090
-  ]);
+function MapView({ toilets, demands, position }) {
 
   // const [selectedPosition, setSelectedPosition] = useState(null);
+  if (!position) {
+    return <h2>Loading Map...</h2>;
+  }
 
   const { selectedLocation, setSelectedLocation } = useLocation();
 
-  useEffect(() => {   // current location ke liye
-
-    navigator.geolocation.getCurrentPosition(
-
-      (pos) => {
-
-        setPosition([
-          pos.coords.latitude,
-          pos.coords.longitude
-        ]);
-
-      },
-
-      (err) => {
-
-        console.log(err);
-
-      }
-
-    );
-
-  }, []);
 
   return (
 
     <div>
       <MapContainer  // current location show krega
         // center={[28.6139, 77.2090]}
-        center={position}
+        center={[position.lat, position.lng]}
         zoom={13}
         style={{
           height: "500px",
@@ -179,11 +156,17 @@ function MapView({ toilets, demands }) {
         />
 
         <ChangeMapView
-          center={position}
+          center={[
+            position.lat,
+            position.lng
+          ]}
         />
 
         <Marker
-          position={position}
+          position={[
+            position.lat,
+            position.lng
+          ]}
           icon={userIcon}
         >
 
@@ -230,7 +213,7 @@ function MapView({ toilets, demands }) {
           <Popup>
 
             <h3>
-              {toilet.name}
+              🚻 {toilet.name}
             </h3>
 
             <p>
@@ -238,19 +221,54 @@ function MapView({ toilets, demands }) {
             </p>
 
             <p>
-              ⭐ Average Rating:
-              {toilet.avg_rating.toFixed(1)}
+              📏 {
+                getDistance(
+                  position.lat,
+                  position.lng,
+                  toilet.location.coordinates[1],
+                  toilet.location.coordinates[0]
+                )
+              } away
             </p>
 
             <p>
-              📝 Reviews:
-              {toilet.total_reviews}
+              ⭐ {toilet.avg_rating.toFixed(1)}
             </p>
+
+            <p>
+              📝 {toilet.total_reviews} Reviews
+            </p>
+
+            <br />
+
+            <button
+              onClick={() => {
+
+                const lat =
+                  toilet.location.coordinates[1];
+
+                const lng =
+                  toilet.location.coordinates[0];
+
+                window.open(
+
+                  `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`,
+
+                  "_blank"
+
+                );
+
+              }}
+            >
+              🧭 Get Directions
+            </button>
+
+            <br /><br />
 
             <Link
               to={`/toilet/${toilet._id}`}
             >
-              View Details
+              👁️ View Details
             </Link>
 
           </Popup>

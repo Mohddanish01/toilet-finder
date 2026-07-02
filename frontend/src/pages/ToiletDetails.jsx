@@ -1,15 +1,31 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../api/axios";
+import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
 function ToiletDetails() {
 
   const { id } = useParams();
 
+  const { user } = useAuth();
+
   const [toilet, setToilet] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
+
+  const handleDirections = () => {
+
+    const lat = toilet.location.coordinates[1];
+    const lng = toilet.location.coordinates[0];
+
+    window.open(
+      `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`,
+      "_blank"
+    );
+
+  };
 
   useEffect(() => {
 
@@ -151,6 +167,32 @@ function ToiletDetails() {
         {toilet.address}
       </p>
 
+      <h3>Facilities</h3>
+
+        {toilet.facilities?.male && <p>🚹 Male Toilet</p>}
+
+        {toilet.facilities?.female && <p>🚺 Female Toilet</p>}
+
+        {toilet.facilities?.wheelchair && (
+          <p>♿ Wheelchair Accessible</p>
+        )}
+
+        {toilet.facilities?.drinkingWater && (
+          <p>💧 Drinking Water</p>
+        )}
+
+        {toilet.facilities?.tissue && (
+          <p>🧻 Tissue Available</p>
+        )}
+
+        <p>
+          💰 {toilet.isFree ? "Free" : "Paid"}
+        </p>
+
+        <p>
+          🕒 {toilet.openingHours}
+        </p>
+
       <p>
         Average Rating:
         {toilet.avg_rating?.toFixed(1)}
@@ -160,6 +202,35 @@ function ToiletDetails() {
         Total Reviews:
         {toilet.total_reviews}
       </p>
+
+      <br />
+
+      <button
+        onClick={handleDirections}
+      >
+        🧭 Get Directions
+      </button>
+
+      {
+        user &&
+        toilet.created_by === user._id && (
+
+          <>
+
+            <br /><br />
+
+            <Link to={`/edit-toilet/${toilet._id}`}>
+
+              <button>
+                ✏️ Edit Toilet
+              </button>
+
+            </Link>
+
+          </>
+
+        )
+      }
 
       <h2>Add Review</h2>
 

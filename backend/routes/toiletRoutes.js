@@ -1,5 +1,5 @@
 import express from "express";
-import { addToilet, getNearbyToilets, getToiletById, getAllToilets} from "../controllers/toiletController.js";
+import { addToilet, getNearbyToilets, getToiletById, getAllToilets, updateToilet} from "../controllers/toiletController.js";
 import { createToiletValidation } from "../validations/toiletValidation.js";
 import { validate } from "../middlewares/validate.js";
 import { protect } from "../middlewares/authMiddleware.js";
@@ -15,6 +15,7 @@ router.post(
 );
 router.get("/", getAllToilets);
 router.get("/nearby", getNearbyToilets);
+router.put("/:id", protect, updateToilet);
 router.get("/:id", getToiletById);
 
 

@@ -8,6 +8,8 @@ import ToiletDetails from "./pages/ToiletDetails";
 import MyDemands from "./pages/MyDemands";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Navbar from "./components/Navbar";
+import AddDemand from "./pages/AddDemand";
+import EditToilet from "./pages/EditToilet";
 
 function App() {
   return (
@@ -44,6 +46,20 @@ function App() {
               <MyDemands />
             </ProtectedRoute>
           }
+        />
+
+        <Route
+          path="/add-demand"
+          element={
+            <ProtectedRoute>
+              <AddDemand />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/edit-toilet/:id"
+          element={<EditToilet />}
         />
 
       </Routes>

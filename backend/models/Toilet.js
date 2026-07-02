@@ -14,6 +14,45 @@ const toiletSchema = new mongoose.Schema({
   address: String,
   images: [String],
 
+  facilities: {
+
+    male: {
+      type: Boolean,
+      default: false
+    },
+
+    female: {
+      type: Boolean,
+      default: false
+    },
+
+    wheelchair: {
+      type: Boolean,
+      default: false
+    },
+
+    drinkingWater: {
+      type: Boolean,
+      default: false
+    },
+
+    tissue: {
+      type: Boolean,
+      default: false
+    }
+
+  },
+
+  isFree: {
+    type: Boolean,
+    default: true
+  },
+
+  openingHours: {
+    type: String,
+    default: "24 Hours"
+  },
+
   created_by: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"

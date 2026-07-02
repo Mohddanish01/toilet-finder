@@ -108,6 +108,7 @@ function Home() {
       <MapView
         toilets={toilets}
         demands={demands}
+        position={position}
       />
 
       <h1>Nearby Public Toilets</h1>
@@ -126,7 +127,7 @@ function Home() {
             </p>
             
             <button
-              onClick={() => navigate("/my-demands")}
+              onClick={() => navigate("/add-demand")}
             >
               🚩 Request a Toilet
             </button>
@@ -140,6 +141,7 @@ function Home() {
             <ToiletCard
               key={toilet._id}
               toilet={toilet}
+              position={position}
             />
 
           ))
