@@ -23,14 +23,16 @@ function AddToilet() {
 
   const [openingHours, setOpeningHours] = useState("24 Hours");
 
+  const [images, setImages] = useState([]);
+
   const {selectedLocation, setSelectedLocation} = useLocation();
   console.log("Selected Location:",selectedLocation);
 
   const [showMap, setShowMap] = useState(false);
   const [currentLocation, setCurrentLocation] = useState([
-  28.6139,
-  77.2090
-]);
+    28.6139,
+    77.2090
+  ]);
 
   const navigate = useNavigate();
 
@@ -198,23 +200,74 @@ function AddToilet() {
 
   };
 
+  // const handleSubmit = async (e) => {
+
+  //   e.preventDefault();
+
+  //   try {
+
+  //     await api.post(
+  //       "/toilets",
+  //       {
+  //         name,
+  //         address,
+  //         lat: Number(lat),
+  //         lng: Number(lng),
+  //         facilities,
+  //         isFree,
+  //         openingHours
+  //       }
+  //     );
+
+  //     alert("Toilet Added");
+
+  //     navigate("/");
+
+  //   } catch (error) {
+
+  //     console.log(error);
+
+  //     alert(
+  //       error.response?.data?.message ||
+  //       "Failed to add toilet"
+  //     );
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
 
     e.preventDefault();
 
     try {
 
+      const formData = new FormData();
+
+      formData.append("name", name);
+      formData.append("address", address);
+      formData.append("lat", Number(lat));
+      formData.append("lng", Number(lng));
+
+      formData.append(
+        "facilities",
+        JSON.stringify(facilities)
+      );
+
+      formData.append("isFree", isFree);
+
+      formData.append(
+        "openingHours",
+        openingHours
+      );
+
+      images.forEach((image) => {
+
+        formData.append("images", image);
+
+      });
+
       await api.post(
         "/toilets",
-        {
-          name,
-          address,
-          lat: Number(lat),
-          lng: Number(lng),
-          facilities,
-          isFree,
-          openingHours
-        }
+        formData
       );
 
       alert("Toilet Added");
@@ -223,13 +276,18 @@ function AddToilet() {
 
     } catch (error) {
 
+      console.log(error.response?.data);
+
       console.log(error);
+
 
       alert(
         error.response?.data?.message ||
         "Failed to add toilet"
       );
+
     }
+
   };
 
   return (
@@ -237,196 +295,67 @@ function AddToilet() {
 
       <h1>Add Toilet</h1>
 
-      <ToiletForm />
+      {/* <ToiletForm
+        name={name}
+        setName={setName}
 
-      <form onSubmit={handleSubmit}>
+        address={address}
+        setAddress={setAddress}
 
-        <input
-          type="text"
-          placeholder="Toilet Name"
-          value={name}
-          onChange={(e) =>
-            setName(e.target.value)
-          }
-        />
+        lat={lat}
+        setLat={setLat}
 
-        <br /><br />
+        lng={lng}
+        setLng={setLng}
 
-        <button
-          type="button"
-          onClick={handleCurrentLocation}
-        >
+        facilities={facilities}
+        setFacilities={setFacilities}
 
-          📍 Use My Current Location
+        isFree={isFree}
+        setIsFree={setIsFree}
 
-        </button>
+        openingHours={openingHours}
+        setOpeningHours={setOpeningHours}
 
-        <br /><br />
+        handleCurrentLocation={handleCurrentLocation}
 
-        <button  // map se location select krne ke liye
-          type="button"
-          onClick={() => setShowMap(true)}
-        >
-          🗺️ Select From Map
-        </button>
+        showMap={showMap}
+        setShowMap={setShowMap}
 
-        <br /><br />
+        handleSubmit={handleSubmit}
+      /> */}
 
-        <input
-          type="text"
-          placeholder="Address"
-          value={address}
-          onChange={(e) =>
-            setAddress(e.target.value)
-          }
-        />
+      <ToiletForm
+        name={name}
+        setName={setName}
 
-        <br /><br />
+        address={address}
+        setAddress={setAddress}
 
-        <input
-          type="number"
-          placeholder="Latitude"
-          value={lat}
-          onChange={(e) =>
-            setLat(e.target.value)
-          }
-        />
+        lat={lat}
+        setLat={setLat}
 
-        <br /><br />
+        lng={lng}
+        setLng={setLng}
 
-        <input
-          type="number"
-          placeholder="Longitude"
-          value={lng}
-          onChange={(e) =>
-            setLng(e.target.value)
-          }
-        />
+        facilities={facilities}
+        setFacilities={setFacilities}
 
-        <br /><br />
+        isFree={isFree}
+        setIsFree={setIsFree}
 
-        <h3>Facilities</h3>
+        openingHours={openingHours}
+        setOpeningHours={setOpeningHours}
 
-        <label>
-          <input
-            type="checkbox"
-            checked={facilities.male}
-            onChange={(e) =>
-              setFacilities({
-                ...facilities,
-                male: e.target.checked
-              })
-            }
-          />
-          Male Toilet
-        </label>
+        images={images}
+        setImages={setImages}
 
-        <br />
+        handleCurrentLocation={handleCurrentLocation}
 
-        <label>
-          <input
-            type="checkbox"
-            checked={facilities.female}
-            onChange={(e) =>
-              setFacilities({
-                ...facilities,
-                female: e.target.checked
-              })
-            }
-          />
-          Female Toilet
-        </label>
+        setShowMap={setShowMap}
 
-        <br />
-
-        <label>
-          <input
-            type="checkbox"
-            checked={facilities.wheelchair}
-            onChange={(e) =>
-              setFacilities({
-                ...facilities,
-                wheelchair: e.target.checked
-              })
-            }
-          />
-          Wheelchair Accessible
-        </label>
-
-        <br />
-
-        <label>
-          <input
-            type="checkbox"
-            checked={facilities.drinkingWater}
-            onChange={(e) =>
-              setFacilities({
-                ...facilities,
-                drinkingWater: e.target.checked
-              })
-            }
-          />
-          Drinking Water
-        </label>
-
-        <br />
-
-        <label>
-          <input
-            type="checkbox"
-            checked={facilities.tissue}
-            onChange={(e) =>
-              setFacilities({
-                ...facilities,
-                tissue: e.target.checked
-              })
-            }
-          />
-          Tissue Available
-        </label>
-
-        <br /><br />
-
-        <h3>Pricing</h3>
-
-        <label>
-          <input
-            type="radio"
-            checked={isFree}
-            onChange={() => setIsFree(true)}
-          />
-          Free
-        </label>
-
-        <label
-          style={{ marginLeft: "20px" }}
-        >
-          <input
-            type="radio"
-            checked={!isFree}
-            onChange={() => setIsFree(false)}
-          />
-          Paid
-        </label>
-
-        <br /><br />
-
-        <input
-          type="text"
-          placeholder="Opening Hours"
-          value={openingHours}
-          onChange={(e) =>
-            setOpeningHours(e.target.value)
-          }
-        />
-
-        <br /><br />
-
-        <button type="submit">
-          Add Toilet
-        </button>
-
-      </form>
+        handleSubmit={handleSubmit}
+      />
 
       {
         showMap && (

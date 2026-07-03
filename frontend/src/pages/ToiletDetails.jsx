@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
@@ -7,13 +7,16 @@ import { Link } from "react-router-dom";
 function ToiletDetails() {
 
   const { id } = useParams();
-
+  const navigate = useNavigate();
   const { user } = useAuth();
 
   const [toilet, setToilet] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
+  const [issueType, setIssueType] = useState("Dirty");
+  const [issueDescription, setIssueDescription] = useState("");
+  const [issues, setIssues] = useState([]);
 
   const handleDirections = () => {
 
@@ -87,10 +90,34 @@ function ToiletDetails() {
       console.log(error);
     }
   };
+
+  const fetchIssues = async () => {
+
+    try {
+
+      const res = await api.get(
+        `/issues/${id}`
+      );
+
+      setIssues(res.data);
+
+    } catch (error) {
+
+      console.log(error);
+
+    }
+
+  };
   
   useEffect(() => {
 
     fetchReviews();
+
+  }, [id]);
+
+  useEffect(() => {
+
+    fetchIssues();
 
   }, [id]);
 
@@ -152,6 +179,37 @@ function ToiletDetails() {
     }
   };
 
+  const handleDelete = async () => {
+
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this toilet?"
+    );
+
+    if (!confirmDelete) {
+      return;
+    }
+
+    try {
+
+      await api.delete(`/toilets/${id}`);
+
+      alert("Toilet deleted successfully");
+
+      navigate("/");
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert(
+        error.response?.data?.message ||
+        "Failed to delete toilet"
+      );
+
+    }
+
+  };
+
   if (!toilet) {
     return <h1>Loading...</h1>;
   }
@@ -166,6 +224,48 @@ function ToiletDetails() {
       <p>
         {toilet.address}
       </p>
+
+      <h3>Images</h3>
+
+      {
+        toilet.images?.length > 0 ? (
+
+          <div
+            style={{
+              display: "flex",
+              gap: "10px",
+              flexWrap: "wrap",
+              marginBottom: "20px"
+            }}
+          >
+
+            {
+              toilet.images.map((image, index) => (
+
+                <img
+                  key={index}
+                  src={`http://localhost:5000${image}`}
+                  alt={`Toilet ${index + 1}`}
+                  width="220"
+                  height="160"
+                  style={{
+                    objectFit: "cover",
+                    borderRadius: "10px",
+                    border: "1px solid #ccc"
+                  }}
+                />
+
+              ))
+            }
+
+          </div>
+
+        ) : (
+
+          <p>No Images Available</p>
+
+        )
+      }
 
       <h3>Facilities</h3>
 
@@ -226,6 +326,13 @@ function ToiletDetails() {
               </button>
 
             </Link>
+
+            <button
+              onClick={handleDelete}
+              style={{ marginLeft: "10px" }}
+            >
+              🗑 Delete Toilet
+            </button>
 
           </>
 

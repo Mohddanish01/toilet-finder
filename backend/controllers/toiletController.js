@@ -4,6 +4,15 @@ export const addToilet = async (req, res) => {
   try {
     const { name, lat, lng, address, facilities, isFree, openingHours } = req.body;
 
+    const parsedFacilities =
+      facilities
+        ? JSON.parse(facilities)
+        : {};
+
+    const images = req.files
+    ? req.files.map(file => `/uploads/${file.filename}`)
+    : [];
+
     if (!name || !lat || !lng) {
       return res.status(400).json(
         { 
@@ -22,11 +31,13 @@ export const addToilet = async (req, res) => {
 
       address,
 
-      facilities,
+      facilities: parsedFacilities,
 
       isFree,
 
       openingHours,
+
+      images,
 
       created_by: req.user._id
     });
@@ -142,6 +153,45 @@ export const updateToilet = async (req, res) => {
     res.status(200).json({
       message: "Toilet updated successfully",
       data: toilet
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    res.status(500).json({
+      message: error.message
+    });
+
+  }
+
+};
+
+export const deleteToilet = async (req, res) => {
+
+  try {
+
+    const toilet = await Toilet.findById(req.params.id);
+
+    if (!toilet) {
+      return res.status(404).json({
+        message: "Toilet not found"
+      });
+    }
+
+    if (
+      toilet.created_by.toString() !==
+      req.user._id.toString()
+    ) {
+      return res.status(403).json({
+        message: "You are not allowed to delete this toilet"
+      });
+    }
+
+    await toilet.deleteOne();
+
+    res.status(200).json({
+      message: "Toilet deleted successfully"
     });
 
   } catch (error) {

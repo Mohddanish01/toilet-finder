@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../api/axios";
+import ToiletForm from "../components/ToiletForm";
 
 function EditToilet() {
 
@@ -9,6 +10,9 @@ function EditToilet() {
 
     const [name, setName] = useState("");
     const [address, setAddress] = useState("");
+
+    const [lat, setLat] = useState("");
+    const [lng, setLng] = useState("");
 
     const [facilities, setFacilities] = useState({
     male: false,
@@ -38,6 +42,10 @@ function EditToilet() {
 
         setAddress(toilet.address);
 
+        setLat(toilet.location.coordinates[1]);
+
+        setLng(toilet.location.coordinates[0]);
+
         setFacilities(toilet.facilities);
 
         setIsFree(toilet.isFree);
@@ -58,6 +66,48 @@ function EditToilet() {
 
     }, [id]);
 
+    const handleUpdate = async (e) => {
+
+      e.preventDefault();
+
+      try {
+
+        await api.put(
+
+          `/toilets/${id}`,
+
+          {
+            name,
+            address,
+            lat: Number(lat),
+            lng: Number(lng),
+            facilities,
+            isFree,
+            openingHours
+          }
+
+        );
+
+        alert("Toilet Updated Successfully");
+
+        navigate(`/toilet/${id}`);
+
+      } catch (error) {
+
+        console.log(error);
+
+        alert(
+
+          error.response?.data?.message ||
+
+          "Failed to update"
+
+        );
+
+      }
+
+    };
+
   return (
 
     <div>
@@ -66,11 +116,36 @@ function EditToilet() {
 
       <p>Toilet ID: {id}</p>
 
-      <h2>{name}</h2>
+      <ToiletForm
+      
+      name={name}
+      setName={setName}
 
-      <p>{address}</p>
+      address={address}
+      setAddress={setAddress}
 
-      <p>{openingHours}</p>
+      lat={lat}
+      setLat={setLat}
+
+      lng={lng}
+      setLng={setLng}
+
+      facilities={facilities}
+      setFacilities={setFacilities}
+
+      isFree={isFree}
+      setIsFree={setIsFree}
+
+      openingHours={openingHours}
+      setOpeningHours={setOpeningHours}
+
+      handleCurrentLocation={() => {}}
+
+      setShowMap={() => {}}
+
+      handleSubmit={handleUpdate}
+    />
+
 
     </div>
 
