@@ -179,6 +179,47 @@ function ToiletDetails() {
     }
   };
 
+  const handleIssueSubmit = async (e) => {
+
+    e.preventDefault();
+
+    if (!issueDescription.trim()) {
+      alert("Please describe the issue");
+      return;
+    }
+
+    try {
+
+      await api.post("/issues", {
+
+        toilet_id: id,
+
+        issueType,
+
+        description: issueDescription
+
+      });
+
+      alert("Issue reported successfully");
+
+      setIssueType("Dirty");
+      setIssueDescription("");
+
+      await fetchIssues();
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert(
+        error.response?.data?.message ||
+        "Failed to report issue"
+      );
+
+    }
+
+  };
+
   const handleDelete = async () => {
 
     const confirmDelete = window.confirm(
@@ -209,6 +250,33 @@ function ToiletDetails() {
     }
 
   };
+
+  const handleResolveIssue = async (issueId) => {
+
+  try {
+
+    await api.put(`/issues/${issueId}`, {
+
+      status: "Resolved"
+
+    });
+
+    alert("Issue marked as resolved");
+
+    fetchIssues();
+
+  } catch (error) {
+
+    console.log(error);
+
+    alert(
+      error.response?.data?.message ||
+      "Failed to update issue"
+    );
+
+  }
+
+};
 
   if (!toilet) {
     return <h1>Loading...</h1>;
@@ -339,6 +407,50 @@ function ToiletDetails() {
         )
       }
 
+      <h2>🚨 Report an Issue</h2>
+
+        <form onSubmit={handleIssueSubmit}>
+
+          <select
+            value={issueType}
+            onChange={(e) =>
+              setIssueType(e.target.value)
+            }
+          >
+
+            <option>Dirty</option>
+            <option>No Water</option>
+            <option>Broken Flush</option>
+            <option>No Tissue</option>
+            <option>Bad Smell</option>
+            <option>Closed</option>
+            <option>Poor Lighting</option>
+            <option>Other</option>
+
+          </select>
+
+          <br /><br />
+
+          <textarea
+            placeholder="Describe the issue..."
+            value={issueDescription}
+            onChange={(e) =>
+              setIssueDescription(e.target.value)
+            }
+          />
+
+          <br /><br />
+
+          <button type="submit">
+
+            🚨 Report Issue
+
+          </button>
+
+        </form>
+
+        <br />
+
       <h2>Add Review</h2>
 
       <form onSubmit={handleReviewSubmit}>
@@ -397,6 +509,71 @@ function ToiletDetails() {
           )
       }
 
+      <h2>🚨 Reported Issues</h2>
+
+      {
+        issues.length === 0 ? (
+
+          <p>No issues reported.</p>
+
+        ) : (
+
+          issues.map((issue) => (
+
+            <div
+              key={issue._id}
+              style={{
+                border: "1px solid #ccc",
+                padding: "10px",
+                marginBottom: "10px",
+                borderRadius: "8px"
+              }}
+            >
+
+              <p>
+                <strong>Issue:</strong> {issue.issueType}
+              </p>
+
+              <p>
+                <strong>Description:</strong> {issue.description}
+              </p>
+
+              <p>
+                <strong>Status:</strong>{" "}
+                {
+                  issue.status === "Resolved"
+                    ? "✅ Resolved"
+                    : "🟡 Open"
+                }
+              </p>
+
+              <p>
+                <strong>Reported By:</strong> {issue.reported_by?.name}
+              </p>
+
+              {
+                user &&
+                toilet.created_by === user._id &&
+                issue.status !== "Resolved" && (
+
+                  <button
+                    onClick={() =>
+                      handleResolveIssue(issue._id)
+                    }
+                  >
+                    ✔ Mark as Resolved
+                  </button>
+
+                )
+              }
+
+            </div>
+
+          ))
+
+        )
+      }
+      
     </div>
   );
 }
