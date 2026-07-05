@@ -6,11 +6,11 @@ import {
   Marker,
   Popup,
   useMap,
-  useMapEvents
+  // useMapEvents
 } from "react-leaflet";
 
 import { Link } from "react-router-dom";
-import { useLocation } from "../context/LocationContext";
+// import { useLocation } from "../context/LocationContext";
 import { getDistance } from "../utils/distance";
 
 import L from "leaflet";
@@ -124,14 +124,14 @@ function MapClickHandler({ setSelectedLocation }) {  // coordinates autofill ke 
 }
 
 
-function MapView({ toilets, demands, position }) {
+function MapView({ toilets, demands, position, enableLocationSelection = false}) {
 
   // const [selectedPosition, setSelectedPosition] = useState(null);
   if (!position) {
     return <h2>Loading Map...</h2>;
   }
 
-  const { selectedLocation, setSelectedLocation } = useLocation();
+  // const { selectedLocation, setSelectedLocation } = useLocation();
 
 
   return (
@@ -151,9 +151,15 @@ function MapView({ toilets, demands, position }) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        <MapClickHandler
-          setSelectedLocation={setSelectedLocation}
-        />
+        {/* {
+          enableLocationSelection && (
+
+            <MapClickHandler
+              setSelectedLocation={setSelectedLocation}
+            />
+
+          )
+        } */}
 
         <ChangeMapView
           center={[
@@ -178,7 +184,7 @@ function MapView({ toilets, demands, position }) {
 
         </Marker>
 
-        {
+        {/* {
           selectedLocation  && (
 
             <Marker
@@ -197,7 +203,7 @@ function MapView({ toilets, demands, position }) {
             </Marker>
 
           )
-        }
+        } */}
 
         {  // toilet show krega
           toilets.map((toilet) => (

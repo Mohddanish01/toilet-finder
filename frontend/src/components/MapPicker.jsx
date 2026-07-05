@@ -1,13 +1,15 @@
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import { useState } from "react";
 
-function LocationMarker({ onLocationSelect }) {
+function LocationMarker({ onLocationSelect, selectable}) {
 
   const [position, setPosition] = useState(null);
 
   useMapEvents({
 
     click(e) {
+
+      if (!selectable) return;
 
       setPosition(e.latlng);
 
@@ -26,7 +28,7 @@ function LocationMarker({ onLocationSelect }) {
 
 }
 
-function MapPicker({ onLocationSelect, center }) {
+function MapPicker({ onLocationSelect, center, selectable = false}) {
 
   return (
 
@@ -46,6 +48,7 @@ function MapPicker({ onLocationSelect, center }) {
 
       <LocationMarker
         onLocationSelect={onLocationSelect}
+        selectable={selectable}
       />
 
     </MapContainer>

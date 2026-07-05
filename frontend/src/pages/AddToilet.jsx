@@ -362,6 +362,7 @@ function AddToilet() {
           <MapPicker
               center={currentLocation}
               onLocationSelect={handleMapLocation}
+              selectable={true}
           />
         )
       }

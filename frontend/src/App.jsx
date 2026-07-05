@@ -10,6 +10,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import AddDemand from "./pages/AddDemand";
 import EditToilet from "./pages/EditToilet";
+import OwnerDashboard from "./pages/OwnerDashboard";
 
 function App() {
   return (
@@ -60,6 +61,15 @@ function App() {
         <Route
           path="/edit-toilet/:id"
           element={<EditToilet />}
+        />
+
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <OwnerDashboard />
+            </ProtectedRoute>
+          }
         />
 
       </Routes>

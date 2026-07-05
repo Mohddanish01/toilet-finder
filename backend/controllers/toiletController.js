@@ -1,4 +1,6 @@
 import Toilet from "../models/Toilet.js";
+import fs from "fs";
+import path from "path";
 
 export const addToilet = async (req, res) => {
   try {
@@ -134,6 +136,28 @@ export const updateToilet = async (req, res) => {
       });
     }
 
+    // const {
+    //   name,
+    //   address,
+    //   facilities,
+    //   isFree,
+    //   openingHours
+    // } = req.body;
+
+    // toilet.name = name;
+    // toilet.address = address;
+    // toilet.facilities = facilities;
+    // toilet.isFree = isFree;
+    // toilet.openingHours = openingHours;
+
+    // const uploadedImages = req.files
+    //   ? req.files.map(file => `/uploads/${file.filename}`)
+    //   : [];
+
+    // if (uploadedImages.length > 0) {
+    //   toilet.images.push(...uploadedImages);
+    // }
+
     const {
       name,
       address,
@@ -142,11 +166,24 @@ export const updateToilet = async (req, res) => {
       openingHours
     } = req.body;
 
+    const parsedFacilities =
+      facilities
+        ? JSON.parse(facilities)
+        : {};
+
     toilet.name = name;
     toilet.address = address;
-    toilet.facilities = facilities;
+    toilet.facilities = parsedFacilities;
     toilet.isFree = isFree;
     toilet.openingHours = openingHours;
+
+    const uploadedImages = req.files
+      ? req.files.map(file => `/uploads/${file.filename}`)
+      : [];
+
+    if (uploadedImages.length > 0) {
+      toilet.images.push(...uploadedImages);
+    }
 
     await toilet.save();
 
@@ -192,6 +229,61 @@ export const deleteToilet = async (req, res) => {
 
     res.status(200).json({
       message: "Toilet deleted successfully"
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    res.status(500).json({
+      message: error.message
+    });
+
+  }
+
+};
+
+export const deleteImage = async (req, res) => {
+
+  try {
+
+    const toilet = await Toilet.findById(req.params.id);
+
+    if (!toilet) {
+      return res.status(404).json({
+        message: "Toilet not found"
+      });
+    }
+
+    if (
+      toilet.created_by.toString() !==
+      req.user._id.toString()
+    ) {
+      return res.status(403).json({
+        message: "You are not allowed to delete images"
+      });
+    }
+
+    const { image } = req.body;
+
+    toilet.images = toilet.images.filter(
+      (img) => img !== image
+    );
+
+    await toilet.save();
+
+    const imagePath = path.join(
+      process.cwd(),
+      image.replace("/", "")
+    );
+
+    if (fs.existsSync(imagePath)) {
+      fs.unlinkSync(imagePath);
+    }
+
+    res.status(200).json({
+      message: "Image deleted successfully",
+      images: toilet.images
     });
 
   } catch (error) {

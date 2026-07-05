@@ -101,6 +101,8 @@ function ToiletForm({
   images,
   setImages,
 
+  showImageUpload = true,
+
   handleCurrentLocation,
 
   setShowMap,
@@ -292,7 +294,7 @@ function ToiletForm({
 
       <br /><br />
 
-      <h3>Upload Images</h3>
+      {/* <h3>Upload Images</h3>
 
         <input
           type="file"
@@ -303,7 +305,26 @@ function ToiletForm({
           }
         />
 
-        <br /><br />
+        <br /><br /> */}
+
+      {
+        showImageUpload && (
+          <>
+            <h3>Upload Images</h3>
+
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={(e) =>
+                setImages([...e.target.files])
+              }
+            />
+
+            <br /><br />
+          </>
+        )
+      }
 
       <button type="submit">
         Add Toilet
