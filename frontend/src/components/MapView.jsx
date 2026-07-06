@@ -6,8 +6,10 @@ import {
   Marker,
   Popup,
   useMap,
-  // useMapEvents
+  useMapEvents
 } from "react-leaflet";
+
+import { useRef } from "react";
 
 import { Link } from "react-router-dom";
 // import { useLocation } from "../context/LocationContext";
@@ -46,6 +48,140 @@ function ChangeMapView({ center }) {
 
   return null;
 }
+
+function FlyToLocation({ target }) {
+
+  const map = useMap();
+
+  useEffect(() => {
+
+    if (!target) return;
+
+    map.flyTo([target.lat, target.lng], 15, {
+      duration: 0.8
+    });
+
+  }, [target, map]);
+
+  return null;
+
+}
+
+function FitNearby({ currentLocation, toilets, demands }) {
+
+  const map = useMap();
+
+  useEffect(() => {
+
+    if (!currentLocation) return;
+
+    const bounds = L.latLngBounds([
+      [currentLocation.lat, currentLocation.lng]
+    ]);
+
+    toilets.forEach((toilet) => {
+
+      bounds.extend([
+        toilet.location.coordinates[1],
+        toilet.location.coordinates[0]
+      ]);
+
+    });
+
+    demands.forEach((demand) => {
+
+      bounds.extend([
+        demand.location.coordinates[1],
+        demand.location.coordinates[0]
+      ]);
+
+    });
+
+    map.fitBounds(bounds, {
+      padding: [80, 80],
+      maxZoom: 16
+    });
+
+  }, [currentLocation, toilets, demands, map]);
+
+  return null;
+
+}
+// const handleLocate = () => {
+
+//   navigator.geolocation.getCurrentPosition(
+
+//     (pos) => {
+
+//       const location = {
+//         lat: pos.coords.latitude,
+//         lng: pos.coords.longitude
+//       };
+
+//       setCurrentLocation(location);
+
+//       setTimeout(() => {
+//         markerRef.current?.openPopup();
+//       }, 1600);
+
+//     },
+
+//     () => {
+
+//       alert("Unable to get your location.");
+
+//     }
+
+//   );
+
+// };
+
+// function LocateMeButton({ markerRef }) {
+
+//   const map = useMap();
+
+//   const handleLocate = () => {
+
+//     navigator.geolocation.getCurrentPosition(
+
+//       (pos) => {
+
+//         const lat = pos.coords.latitude;
+//         const lng = pos.coords.longitude;
+
+//         map.flyTo([lat, lng], 16, {
+//           duration: 1.5
+//         });
+
+//         setTimeout(() => {
+//           markerRef.current?.openPopup();
+//         }, 1200);
+
+//       },
+
+//       () => {
+
+//         alert("Unable to get your location.");
+
+//       }
+
+//     );
+
+//   };
+
+//   return (
+
+//     <button
+//       onClick={handleLocate}
+//       className="absolute bottom-5 right-5 z-[1000] bg-white shadow-xl rounded-full w-14 h-14 flex items-center justify-center hover:bg-blue-50 transition text-2xl"
+//       title="Locate Me"
+//     >
+//       📍
+//     </button>
+
+//   );
+
+// }
 
 const fetchAddress = async (
   lat,
@@ -130,26 +266,65 @@ function MapView({ toilets, demands, position, enableLocationSelection = false})
   if (!position) {
     return <h2>Loading Map...</h2>;
   }
+  const markerRef = useRef(null);
+
+  const [currentLocation, setCurrentLocation] = useState(null);
+
+  const [locationEnabled, setLocationEnabled] = useState(false);
+
+  const handleLocate = () => {
+
+    setLocationEnabled(true);
+
+    navigator.geolocation.getCurrentPosition(
+
+      (pos) => {
+
+        const location = {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude
+        };
+
+        setCurrentLocation(location);
+
+        setTimeout(() => {
+          markerRef.current?.openPopup();
+        }, 1600);
+
+      },
+
+      () => {
+
+        alert("Unable to get your location.");
+
+      }
+
+    );
+
+  };
 
   // const { selectedLocation, setSelectedLocation } = useLocation();
 
 
   return (
 
-    <div>
-      <MapContainer  // current location show krega
-        // center={[28.6139, 77.2090]}
-        center={[position.lat, position.lng]}
-        zoom={13}
-        style={{
-          height: "500px",
-          width: "100%"
-        }}
+    // <div>
+    <div className="relative">
+      <MapContainer
+          center={[position.lat, position.lng]}
+          zoom={13}
+          style={{
+              height: "450px",
+              width: "100%",
+              borderRadius: "20px"
+          }}
       >
 
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+
+        {/* <LocateControl markerRef={markerRef} /> */}
 
         {/* {
           enableLocationSelection && (
@@ -168,10 +343,26 @@ function MapView({ toilets, demands, position, enableLocationSelection = false})
           ]}
         />
 
-        <Marker
+        <FlyToLocation target={currentLocation} />
+
+        <FitNearby
+          currentLocation={currentLocation}
+          toilets={toilets}
+          demands={demands}
+        />
+
+        {/* <Marker
           position={[
             position.lat,
             position.lng
+          ]}
+          icon={userIcon}
+        > */}
+        {/* <Marker
+          ref={markerRef}
+          position={[
+            currentLocation?.lat || position.lat,
+            currentLocation?.lng || position.lng
           ]}
           icon={userIcon}
         >
@@ -182,7 +373,30 @@ function MapView({ toilets, demands, position, enableLocationSelection = false})
 
           </Popup>
 
-        </Marker>
+        </Marker> */}
+
+        {
+          locationEnabled && (
+
+            <Marker
+              ref={markerRef}
+              position={[
+                currentLocation?.lat || position.lat,
+                currentLocation?.lng || position.lng
+              ]}
+              icon={userIcon}
+            >
+
+              <Popup>
+
+                📍 You are here
+
+              </Popup>
+
+            </Marker>
+
+          )
+        }
 
         {/* {
           selectedLocation  && (
@@ -206,6 +420,7 @@ function MapView({ toilets, demands, position, enableLocationSelection = false})
         } */}
 
         {  // toilet show krega
+          locationEnabled &&
           toilets.map((toilet) => (
 
           <Marker
@@ -285,6 +500,7 @@ function MapView({ toilets, demands, position, enableLocationSelection = false})
       }
 
       {  // demand show krega
+        locationEnabled &&
         demands.map((demand) => (
 
           <Marker
@@ -321,26 +537,81 @@ function MapView({ toilets, demands, position, enableLocationSelection = false})
 
     </MapContainer>
 
-    <div
-      style={{
-        background: "white",
-        padding: "10px",
-        borderRadius: "8px",
-        marginTop: "10px",
-        width: "250px",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.2)"
-      }}
+    {/* <button
+      onClick={handleLocate}
+      className="absolute bottom-24 right-6 bg-white rounded-full shadow-xl w-14 h-14 text-2xl hover:scale-105 transition"
     >
+      📍
+    </button> */}
 
-      <h3>Map Legend</h3>
+    {
+      !locationEnabled && (
 
-      <p>🟢 Your Location</p>
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-[1000]">
 
-      <p>🔵 Public Toilet</p>
+          <button
+            onClick={handleLocate}
+            className="pointer-events-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow-xl text-lg font-semibold transition"
+          >
+            📍 Enable Current Location
+          </button>
 
-      <p>🔴 Toilet Demand</p>
+        </div>
 
-    </div>
+      )
+    }
+
+    {/* <LocateMeButton markerRef={markerRef} /> */}
+      {/* {
+      locationEnabled && (
+      <div className="flex flex-wrap gap-3 mt-5">
+
+        <div className="bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-medium">
+
+          🟢 Your Location
+
+        </div>
+
+        <div className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium">
+
+          🔵 Public Toilet
+
+        </div>
+
+        <div className="bg-red-100 text-red-700 px-4 py-2 rounded-full text-sm font-medium">
+
+          🔴 Toilet Demand
+
+        </div>
+
+      </div>
+      )
+      } */}
+
+      {
+        locationEnabled && (
+
+          <div className="absolute top-5 right-5 z-[1000] bg-white/95 backdrop-blur-md rounded-2xl shadow-xl p-4 space-y-3 border border-slate-200">
+
+            <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
+              <span className="w-3 h-3 rounded-full bg-green-500"></span>
+              Your Location
+            </div>
+
+            <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
+              <span className="w-3 h-3 rounded-full bg-blue-500"></span>
+              Public Toilet
+            </div>
+
+            <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
+              <span className="w-3 h-3 rounded-full bg-red-500"></span>
+              Toilet Demand
+            </div>
+
+          </div>
+
+        )
+      }
 
   </div>
 
