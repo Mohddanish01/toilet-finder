@@ -14,6 +14,11 @@ const demandSchema = new mongoose.Schema(
     }
   },
 
+  address: {
+    type: String,
+    required: true
+  },
+
   votes: {
     type: Number,
     default: 1

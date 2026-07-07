@@ -6,7 +6,7 @@ export const createDemand = async (
 ) => {
   try {
 
-    const { lat, lng } = req.body;
+    const { lat, lng, address } = req.body;
 
     const existingDemand = await Demand.findOne({ // create se phle check krre h nearby demand
         location: {
@@ -33,6 +33,9 @@ export const createDemand = async (
           type: "Point",
           coordinates: [lng, lat]
         },
+
+        address,
+        
         created_by: req.user._id
       });
 

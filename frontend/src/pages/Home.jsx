@@ -14,6 +14,32 @@ function Home() {
   const [toilets, setToilets] = useState([]);
   const [demands, setDemands] = useState([]);
   const [position, setPosition] = useState(null);
+  const [locationEnabled, setLocationEnabled] = useState(false);
+
+  const handleDemandVote = async (id) => {
+
+    try {
+
+      const res = await api.post(`/demands/${id}/vote`);
+
+      setDemands((prev) =>
+        prev.map((demand) =>
+          demand._id === id
+            ? { ...demand, votes: res.data.votes }
+            : demand
+        )
+      );
+
+    } catch (error) {
+
+      alert(
+        error.response?.data?.message ||
+        "Failed to vote."
+      );
+
+    }
+
+  };
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,6 +52,9 @@ function Home() {
           lat: pos.coords.latitude,
           lng: pos.coords.longitude
         });
+
+        // setLocationEnabled(true);
+
 
       },
 
@@ -155,6 +184,9 @@ function Home() {
                 toilets={toilets}
                 demands={demands}
                 position={position}
+                locationEnabled={locationEnabled}
+                setLocationEnabled={setLocationEnabled}
+                handleDemandVote={handleDemandVote}
               />
 
             </div>
@@ -178,7 +210,25 @@ function Home() {
         </div>
 
         {
-          toilets.length === 0 ? (
+            !locationEnabled ? (
+
+              <div className="bg-white rounded-3xl shadow-md p-10 text-center max-w-xl mx-auto mt-10">
+
+                <h3 className="text-2xl font-bold text-slate-800">
+
+                  📍 Enable Your Location
+
+                </h3>
+
+                <p className="text-slate-500 mt-4">
+
+                  Allow location access to discover nearby public toilets.
+
+                </p>
+
+              </div>
+
+            ) : toilets.length === 0 ? (
 
             <div className="bg-white rounded-3xl shadow-md p-10 text-center max-w-xl mx-auto mt-10">
 
@@ -246,20 +296,47 @@ function Home() {
         </div>
 
         {
-          demands.length === 0
-          ? (
-              <p>No demands found</p>
-            )
-          : (
-              demands.map((demand) => (
+          demands.length === 0 ? (
 
-                <DemandCard
-                  key={demand._id}
-                  demand={demand}
-                />
+            <div className="bg-white rounded-3xl shadow-md p-10 text-center max-w-xl mx-auto mt-10">
 
-              ))
-            )
+              <h3 className="text-2xl font-bold text-slate-800">
+
+                🚧 No Community Demands Yet
+
+              </h3>
+
+              <p className="text-slate-500 mt-4">
+
+                Great news! There are currently no pending toilet requests.
+
+              </p>
+
+            </div>
+
+          ) : (
+
+            <div className="max-w-7xl mx-auto px-6 mt-12">
+
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+
+                {
+                  demands.map((demand) => (
+
+                    <DemandCard
+                      key={demand._id}
+                      demand={demand}
+                      handleDemandVote={handleDemandVote}
+                    />
+
+                  ))
+                }
+
+              </div>
+
+            </div>
+
+          )
         }
 
       </div>

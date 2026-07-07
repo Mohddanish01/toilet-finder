@@ -89,7 +89,8 @@ function AddDemand() {
 
       await api.post("/demands", {
         lat: Number(lat),
-        lng: Number(lng)
+        lng: Number(lng),
+        address
       });
 
       alert("Demand Created Successfully");
