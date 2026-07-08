@@ -53,8 +53,10 @@ export const addReview = async (req, res) => {
 export const getReviewsByToiletId = async (req, res) => {
   try {
     const reviews = await Review.find({
-      toilet_id: req.params.toiletId
-    }).sort({ createdAt: -1 });
+  toilet_id: req.params.toiletId
+  })
+  .populate("user_id", "name")
+  .sort({ createdAt: -1 });
 
     res.status(200).json(reviews);
   } catch (error) {

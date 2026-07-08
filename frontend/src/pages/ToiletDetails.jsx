@@ -19,6 +19,11 @@ function ToiletDetails() {
   const [issues, setIssues] = useState([]);
   const [showReviews, setShowReviews] = useState(false);
   const [showIssues, setShowIssues] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [showIssueForm, setShowIssueForm] = useState(false);
+  const [editingReview, setEditingReview] = useState(null);
+  const [editRating, setEditRating] = useState("");
+  const [editComment, setEditComment] = useState("");
 
   const handleDirections = () => {
 
@@ -278,7 +283,73 @@ function ToiletDetails() {
 
   }
 
-};
+  };
+
+  const handleEditReview = (review) => {
+
+    setEditingReview(review._id);
+
+    setEditRating(review.rating);
+
+    setEditComment(review.comment);
+
+  };
+
+  const handleUpdateReview = async (reviewId) => {
+
+    try {
+
+      await api.put(`/reviews/${reviewId}`, {
+
+        rating: editRating,
+
+        comment: editComment
+
+      });
+
+      await fetchReviews();
+
+      const toiletRes = await api.get(`/toilets/${id}`);
+
+      setToilet(toiletRes.data);
+
+      setEditingReview(null);
+
+    } catch (error) {
+
+      alert(
+        error.response?.data?.message ||
+        "Failed to update review."
+      );
+
+    }
+
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+
+    if (!window.confirm("Delete this review?")) return;
+
+    try {
+
+      await api.delete(`/reviews/${reviewId}`);
+
+      await fetchReviews();
+
+      const toiletRes = await api.get(`/toilets/${id}`);
+
+      setToilet(toiletRes.data);
+
+    } catch (error) {
+
+      alert(
+        error.response?.data?.message ||
+        "Failed to delete review."
+      );
+
+    }
+
+  };
 
   if (!toilet) {
     return <h1>Loading...</h1>;
@@ -532,140 +603,218 @@ function ToiletDetails() {
 
       <div className="grid grid-cols-[1fr_1fr] gap-6 items-start mb-10">
 
-      <div className="bg-white rounded-2xl shadow-md border border-slate-200 p-4">
-
-        <h2 className="text-lg font-bold text-slate-900 mb-5">
-
-          🚨 Report an Issue
-
-        </h2>
-
-          {
-            user ? (
-            <form onSubmit={handleIssueSubmit}>
-
-              <select
-                value={issueType}
-                onChange={(e) => setIssueType(e.target.value)}
-                className="w-full border border-slate-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-
-                <option>Dirty</option>
-                <option>No Water</option>
-                <option>Broken Flush</option>
-                <option>No Tissue</option>
-                <option>Bad Smell</option>
-                <option>Closed</option>
-                <option>Poor Lighting</option>
-                <option>Other</option>
-
-              </select>
-
-              {/* <br /><br /> */}
-
-              <textarea
-                placeholder="Describe the issue..."
-                value={issueDescription}
-                onChange={(e) => setIssueDescription(e.target.value)}
-                rows={2}
-                className="w-full mt-4 border border-slate-300 rounded-xl px-4 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-
-              {/* <br /><br /> */}
-
-              <button
-                type="submit"
-                className="mt-5 bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-xl font-medium transition"
-              >
-                🚨 Report Issue
-              </button>
-
-            </form>
-            ) : (
-
-              <div className="text-center py-6">
-
-                <p className="text-slate-500 mb-4">
-
-                  Login to report an issue.
-
-                </p>
-
-                <Link
-                  to="/login"
-                  className="inline-block bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl transition"
-                >
-                  🔒 Login
-                </Link>
-
-              </div>
-
-            )
-          }
-
-      </div>
-
-
-      <div className="bg-white rounded-2xl shadow-md border border-slate-200 p-4">
-
-        <h2 className="text-lg font-bold text-slate-900 mb-5">
-
-          ⭐ Add Review
-
-        </h2>
         {
-          user ? (
+          !showIssueForm ? (
 
-          <form onSubmit={handleReviewSubmit}>
-          <input
-            type="number"
-            min="1"
-            max="5"
-            value={rating}
-            onChange={(e) => setRating(e.target.value)}
-            placeholder="Rating (1-5)"
-            className="w-full border border-slate-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+            <div
+              onClick={() => setShowIssueForm(true)}
+              className="bg-white rounded-2xl shadow-md border border-slate-200 p-5 cursor-pointer hover:shadow-lg transition flex justify-between items-center"
+            >
 
-         <textarea
-            placeholder="Write your review..."
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            rows={2}
-            className="w-full mt-4 border border-slate-300 rounded-xl px-4 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+              <h2 className="text-lg font-bold text-slate-900">
 
-          <button
-            type="submit"
-            className="mt-5 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl font-medium transition"
-          >
-            ⭐ Submit Review
-          </button>
+                🚨 Report an Issue
 
-        </form>
+              </h2>
+
+              <span className="text-2xl font-bold text-red-500">
+
+                +
+
+              </span>
+
+            </div>
 
           ) : (
 
-            <div className="text-center py-6">
+            <div className="bg-white rounded-2xl shadow-md border border-slate-200 p-4">
 
-              <p className="text-slate-500 mb-4">
+              <div className="flex justify-between items-center mb-5">
 
-                Login to share your experience.
+                <h2 className="text-lg font-bold text-slate-900">
 
-              </p>
+                  🚨 Report an Issue
 
-              <Link
-                to="/login"
-                className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl transition"
-              >
-                🔒 Login
-              </Link>
+                </h2>
+
+                <button
+                  type="button"
+                  onClick={() => setShowIssueForm(false)}
+                  className="text-2xl text-slate-500 hover:text-red-500"
+                >
+                  ✕
+                </button>
+
+              </div>
+
+              {
+                user ? (
+
+                  <form onSubmit={handleIssueSubmit}>
+
+                    <select
+                      value={issueType}
+                      onChange={(e) => setIssueType(e.target.value)}
+                      className="w-full border border-slate-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+
+                      <option>Dirty</option>
+                      <option>No Water</option>
+                      <option>Broken Flush</option>
+                      <option>No Tissue</option>
+                      <option>Bad Smell</option>
+                      <option>Closed</option>
+                      <option>Poor Lighting</option>
+                      <option>Other</option>
+
+                    </select>
+
+                    <textarea
+                      placeholder="Describe the issue..."
+                      value={issueDescription}
+                      onChange={(e) => setIssueDescription(e.target.value)}
+                      rows={2}
+                      className="w-full mt-4 border border-slate-300 rounded-xl px-4 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+
+                    <button
+                      type="submit"
+                      className="mt-5 bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-xl font-medium transition"
+                    >
+                      🚨 Report Issue
+                    </button>
+
+                  </form>
+
+                ) : (
+
+                  <div className="text-center py-6">
+
+                    <p className="text-slate-500 mb-4">
+
+                      Login to report an issue.
+
+                    </p>
+
+                    <Link
+                      to="/login"
+                      className="inline-block bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl transition"
+                    >
+                      🔒 Login
+                    </Link>
+
+                  </div>
+
+                )
+              }
 
             </div>
 
           )
         }
-        </div>
+
+        {
+          !showReviewForm ? (
+
+            <div
+              onClick={() => setShowReviewForm(true)}
+              className="bg-white rounded-2xl shadow-md border border-slate-200 p-5 cursor-pointer hover:shadow-lg transition flex justify-between items-center"
+            >
+
+              <h2 className="text-lg font-bold text-slate-900">
+
+                ⭐ Add Review
+
+              </h2>
+
+              <span className="text-2xl font-bold text-blue-600">
+
+                +
+
+              </span>
+
+            </div>
+
+          ) : (
+
+            <div className="bg-white rounded-2xl shadow-md border border-slate-200 p-4">
+
+              <div className="flex justify-between items-center mb-5">
+
+                <h2 className="text-lg font-bold text-slate-900">
+
+                  ⭐ Add Review
+
+                </h2>
+
+                <button
+                  type="button"
+                  onClick={() => setShowReviewForm(false)}
+                  className="text-2xl text-slate-500 hover:text-red-500"
+                >
+                  ✕
+                </button>
+
+              </div>
+
+              {
+                user ? (
+
+                  <form onSubmit={handleReviewSubmit}>
+
+                    <input
+                      type="number"
+                      min="1"
+                      max="5"
+                      value={rating}
+                      onChange={(e) => setRating(e.target.value)}
+                      placeholder="Rating (1-5)"
+                      className="w-full border border-slate-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+
+                    <textarea
+                      placeholder="Write your review..."
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      rows={2}
+                      className="w-full mt-4 border border-slate-300 rounded-xl px-4 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+
+                    <button
+                      type="submit"
+                      className="mt-5 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl font-medium transition"
+                    >
+                      ⭐ Submit Review
+                    </button>
+
+                  </form>
+
+                ) : (
+
+                  <div className="text-center py-6">
+
+                    <p className="text-slate-500 mb-4">
+
+                      Login to share your experience.
+
+                    </p>
+
+                    <Link
+                      to="/login"
+                      className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl transition"
+                    >
+                      🔒 Login
+                    </Link>
+
+                  </div>
+
+                )
+              }
+
+            </div>
+
+          )
+        }
       </div>
 
       {/* ===================== Reviews ===================== */}
@@ -700,20 +849,163 @@ function ToiletDetails() {
 
                 ) : (
 
+                  // reviews.map((review) => (
+
+                  //   <div
+                  //     key={review._id}
+                  //     className="bg-white rounded-xl border border-slate-200 p-4 mt-3"
+                  //   >
+
+                  //     <p className="font-semibold">
+                  //       ⭐ {review.rating}/5
+                  //     </p>
+
+                  //     <p className="mt-2 text-slate-600">
+                  //       {review.comment}
+                  //     </p>
+
+                  //   </div>
+
+                  // ))
                   reviews.map((review) => (
 
                     <div
                       key={review._id}
-                      className="bg-white rounded-xl border border-slate-200 p-4 mt-3"
+                      className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mt-4 hover:shadow-md transition"
                     >
 
-                      <p className="font-semibold">
-                        ⭐ {review.rating}/5
-                      </p>
+                      {
+                        editingReview === review._id ? (
 
-                      <p className="mt-2 text-slate-600">
-                        {review.comment}
-                      </p>
+                          <>
+
+                            <div className="flex justify-between items-center mb-4">
+
+                              <h3 className="font-semibold text-slate-800">
+
+                                ✏ Edit Review
+
+                              </h3>
+
+                              <button
+                                onClick={() => setEditingReview(null)}
+                                className="text-slate-500 hover:text-red-500 text-xl"
+                              >
+                                ✕
+                              </button>
+
+                            </div>
+
+                            <input
+                              type="number"
+                              min="1"
+                              max="5"
+                              value={editRating}
+                              onChange={(e) => setEditRating(e.target.value)}
+                              className="w-full border border-slate-300 rounded-xl px-4 py-2"
+                            />
+
+                            <textarea
+                              value={editComment}
+                              onChange={(e) => setEditComment(e.target.value)}
+                              rows={3}
+                              className="w-full mt-4 border border-slate-300 rounded-xl px-4 py-2 resize-none"
+                            />
+
+                            <div className="flex gap-3 mt-4">
+
+                              <button
+                                onClick={() => handleUpdateReview(review._id)}
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl"
+                              >
+                                💾 Save
+                              </button>
+
+                              <button
+                                onClick={() => setEditingReview(null)}
+                                className="bg-slate-200 hover:bg-slate-300 px-5 py-2 rounded-xl"
+                              >
+                                Cancel
+                              </button>
+
+                            </div>
+
+                          </>
+
+                        ) : (
+
+                          <>
+
+                            <div className="flex justify-between items-center">
+
+                              <div>
+
+                                <h3 className="font-semibold text-slate-800">
+
+                                  👤 {review.user_id?.name || "Anonymous"}
+
+                                </h3>
+
+                                <div className="text-yellow-500 text-lg mt-1">
+
+                                  {"⭐".repeat(review.rating)}
+
+                                </div>
+
+                              </div>
+
+                              <span className="text-sm text-slate-400">
+
+                                {
+                                  new Date(review.createdAt).toLocaleDateString(
+                                    "en-IN",
+                                    {
+                                      day: "numeric",
+                                      month: "short",
+                                      year: "numeric"
+                                    }
+                                  )
+                                }
+
+                              </span>
+
+                            </div>
+
+                            <p className="mt-4 text-slate-600 leading-relaxed">
+
+                              {review.comment}
+
+                            </p>
+
+                            {
+                              user &&
+                              review.user_id?._id === user._id && (
+
+                                <div className="flex gap-4 mt-5">
+
+                                  <button
+                                    onClick={() => handleEditReview(review)}
+                                    className="text-blue-600 hover:text-blue-800 font-medium"
+                                  >
+                                    ✏ Edit
+                                  </button>
+
+                                  <button
+                                    onClick={() => handleDeleteReview(review._id)}
+                                    className="text-red-600 hover:text-red-800 font-medium"
+                                  >
+                                    🗑 Delete
+                                  </button>
+
+                                </div>
+
+                              )
+                            }
+
+                          </>
+
+                        )
+                      }
 
                     </div>
 
@@ -784,30 +1076,69 @@ function ToiletDetails() {
 
                   issues.map((issue) => (
 
-                    <div
-                      key={issue._id}
-                      className="bg-white rounded-xl border border-slate-200 p-4 mt-3"
-                    >
+                  <div
+                    key={issue._id}
+                    className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mt-4 hover:shadow-md transition"
+                  >
 
-                      <p>
-                        <strong>Issue:</strong> {issue.issueType}
-                      </p>
+                    <div className="flex justify-between items-start">
 
-                      <p className="mt-2">
-                        <strong>Description:</strong> {issue.description}
-                      </p>
+                      <div>
 
-                      <p className="mt-2">
-                        <strong>Status:</strong>{" "}
-                        {issue.status === "Resolved"
-                          ? "✅ Resolved"
-                          : "🟡 Open"}
-                      </p>
+                        <h3 className="font-semibold text-slate-800 text-lg">
 
-                      <p className="mt-2">
-                        <strong>Reported By:</strong>{" "}
-                        {issue.reported_by?.name}
-                      </p>
+                          {issue.status === "Resolved" ? "✅" : "🟡"} {issue.issueType}
+
+                        </h3>
+
+                      </div>
+
+                      <span className="text-sm text-slate-400">
+
+                        {
+                          new Date(issue.createdAt).toLocaleDateString(
+                            "en-IN",
+                            {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric"
+                            }
+                          )
+                        }
+
+                      </span>
+
+                    </div>
+
+                    <p className="mt-4 text-slate-600 leading-relaxed">
+
+                      {issue.description}
+
+                    </p>
+
+                    <div className="flex items-center justify-between mt-5">
+
+                      <div>
+
+                        <p className="text-sm text-slate-500">
+
+                          👤 {issue.reported_by?.name || "Anonymous"}
+
+                        </p>
+
+                        <span
+                          className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium ${
+                            issue.status === "Resolved"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-yellow-100 text-yellow-700"
+                          }`}
+                        >
+
+                          {issue.status}
+
+                        </span>
+
+                      </div>
 
                       {
                         toilet.created_by === user._id &&
@@ -815,9 +1146,11 @@ function ToiletDetails() {
 
                           <button
                             onClick={() => handleResolveIssue(issue._id)}
-                            className="mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
+                            className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-xl shadow-sm hover:shadow-md transition"
                           >
-                            ✔ Mark as Resolved
+
+                            ✔ Resolve
+
                           </button>
 
                         )
@@ -825,7 +1158,9 @@ function ToiletDetails() {
 
                     </div>
 
-                  ))
+                  </div>
+
+                ))
 
                 )
 

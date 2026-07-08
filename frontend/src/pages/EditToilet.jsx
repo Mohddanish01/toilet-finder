@@ -31,6 +31,8 @@ function EditToilet() {
 
     const [newImages, setNewImages] = useState([]);
 
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
 
     const fetchToilet = async () => {
@@ -109,6 +111,7 @@ function EditToilet() {
     const handleUpdate = async (e) => {
 
       e.preventDefault();
+      setLoading(true);
 
       try {
 
@@ -158,13 +161,16 @@ function EditToilet() {
             }
           }
         );
+        setLoading(false);
 
-
-        alert("Toilet Updated Successfully");
-
-        navigate(`/toilet/${id}`);
+        navigate(`/toilet/${id}`, {
+          state: {
+            success: "Toilet updated successfully!"
+          }
+        });
 
       } catch (error) {
+        setLoading(false);
 
         console.log(error);
 
@@ -182,65 +188,171 @@ function EditToilet() {
 
   return (
 
-    <div>
+    <div className="bg-slate-50 min-h-screen">
 
-      <h1>Edit Toilet</h1>
+    <div className="max-w-5xl mx-auto px-6 py-10">
 
-      <p>Toilet ID: {id}</p>
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
 
-      <h2>Current Images</h2>
+        <h1 className="text-4xl font-bold text-slate-900">
 
-      {
-        images.length === 0 ? (
+          ✏️ Edit Toilet
 
-          <p>No Images</p>
+        </h1>
 
-        ) : (
+        <p className="text-slate-500 mt-2">
 
-          images.map((image, index) => (
+          Update toilet information, facilities and images.
 
-            <div
-              key={index}
-              style={{
-                marginBottom: "20px"
-              }}
-            >
+        </p>
 
-              <img
-                src={`http://localhost:5000${image}`}
-                alt="Toilet"
-                width="220"
-              />
+      </div>
 
-              <br /><br />
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
 
-              <button
-                onClick={() =>
-                  handleDeleteImage(image)
-                }
-              >
-                🗑 Delete Image
-              </button>
+        <h2 className="text-2xl font-bold text-slate-900 mb-5">
+
+          📷 Current Images
+
+        </h2>
+
+        {
+          images.length === 0 ? (
+
+            <div className="text-center text-slate-500 py-10">
+
+              No Images Available
 
             </div>
 
-          ))
+          ) : (
 
-        )
-      }
+            <div className="flex gap-4 overflow-x-auto pb-2">
 
-      <h2>Add New Images</h2>
+              {
+                images.map((image, index) => (
 
-      <input
-        type="file"
-        multiple
-        accept="image/*"
-        onChange={(e) =>
-          setNewImages([...e.target.files])
+                  <div
+                    key={index}
+                    className="relative w-40 h-40 flex-shrink-0 group"
+                  >
+
+                    <img
+                      src={`http://localhost:5000${image}`}
+                      alt=""
+                      className="w-full h-full object-cover rounded-xl border border-slate-200 shadow-sm transition group-hover:scale-105"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleDeleteImage(image)
+                      }
+                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 bg-black/70 hover:bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center transition"
+                    >
+
+                      ✕
+
+                    </button>
+
+                  </div>
+
+                ))
+              }
+
+            </div>
+
+          )
         }
-      />
 
-      <br /><br />
+      </div>
+
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+
+        <h2 className="text-2xl font-bold text-slate-900 mb-5">
+
+          ➕ Add New Images
+
+        </h2>
+
+        <label className="flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-2xl p-8 cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition">
+
+          <span className="text-5xl">
+
+            ☁️
+
+          </span>
+
+          <p className="mt-4 text-xl font-semibold">
+
+            Upload More Images
+
+          </p>
+
+          <p className="text-slate-500">
+
+            JPG, PNG • Multiple Images
+
+          </p>
+
+          <input
+            type="file"
+            multiple
+            accept="image/*"
+            className="hidden"
+            onChange={(e) =>
+              setNewImages([...e.target.files])
+            }
+          />
+
+          {
+            newImages.length > 0 && (
+
+              <div className="flex gap-4 mt-6 overflow-x-auto">
+
+                <div className="flex gap-4 mt-6 overflow-x-auto">
+
+                  {
+                    newImages.map((image, index) => (
+
+                      <div
+                        key={index}
+                        className="relative w-28 h-28 flex-shrink-0 group"
+                      >
+
+                        <img
+                          src={URL.createObjectURL(image)}
+                          alt=""
+                          className="w-full h-full rounded-xl object-cover border border-slate-200 shadow-sm transition duration-300 group-hover:scale-105"
+                        />
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setNewImages(
+                              newImages.filter((_, i) => i !== index)
+                            )
+                          }
+                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 bg-black/70 hover:bg-red-500 text-white w-7 h-7 rounded-full flex items-center justify-center transition duration-200"
+                        >
+                          ✕
+                        </button>
+
+                      </div>
+
+                    ))
+                  }
+
+                </div>
+
+              </div>
+
+            )
+          }
+
+        </label>
+
+      </div>
 
       <ToiletForm
       
@@ -267,6 +379,14 @@ function EditToilet() {
 
       showImageUpload={false}
 
+      pageTitle="✏️ Edit Toilet"
+
+      pageDescription="Update toilet information, facilities and images."
+
+      submitButtonText="💾 Save Changes"
+
+      loading={loading}
+
       handleCurrentLocation={() => {}}
 
       setShowMap={() => {}}
@@ -275,6 +395,7 @@ function EditToilet() {
     />
 
 
+    </div>
     </div>
 
   );

@@ -18,13 +18,19 @@ export const getDashboard = async (req, res) => {
       toilet_id: {
         $in: toiletIds
       }
-    });
+    })
+    .populate("user_id", "name")
+    .populate("toilet_id", "name")
+    .sort({ createdAt: -1 });
 
     const issues = await IssueReport.find({
       toilet_id: {
         $in: toiletIds
       }
-    });
+    })
+    .populate("reported_by", "name")
+    .populate("toilet_id", "name")
+    .sort({ createdAt: -1 });
 
     const totalToilets = toilets.length;
 
@@ -61,7 +67,11 @@ export const getDashboard = async (req, res) => {
 
       resolvedIssues,
 
-      toilets
+      toilets,
+
+      recentReviews: reviews.slice(0, 5),
+
+      recentIssues: issues.slice(0, 5)
 
     });
 

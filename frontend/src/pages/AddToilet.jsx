@@ -295,36 +295,6 @@ function AddToilet() {
 
       <h1>Add Toilet</h1>
 
-      {/* <ToiletForm
-        name={name}
-        setName={setName}
-
-        address={address}
-        setAddress={setAddress}
-
-        lat={lat}
-        setLat={setLat}
-
-        lng={lng}
-        setLng={setLng}
-
-        facilities={facilities}
-        setFacilities={setFacilities}
-
-        isFree={isFree}
-        setIsFree={setIsFree}
-
-        openingHours={openingHours}
-        setOpeningHours={setOpeningHours}
-
-        handleCurrentLocation={handleCurrentLocation}
-
-        showMap={showMap}
-        setShowMap={setShowMap}
-
-        handleSubmit={handleSubmit}
-      /> */}
-
       <ToiletForm
         name={name}
         setName={setName}
@@ -349,6 +319,12 @@ function AddToilet() {
 
         images={images}
         setImages={setImages}
+
+        pageTitle="🚻 Add Public Toilet"
+
+        pageDescription="Help your community by adding a verified public toilet."
+
+        submitButtonText="➕ Add Public Toilet"
 
         handleCurrentLocation={handleCurrentLocation}
 
