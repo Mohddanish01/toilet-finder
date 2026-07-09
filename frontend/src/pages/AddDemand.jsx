@@ -127,7 +127,11 @@ function AddDemand() {
 
             // Next step me yahan map navigation karenge
 
-            console.log(existingDemand);
+            navigate("/", {
+              state: {
+                focusDemand: existingDemand
+              }
+            });
 
           }
 

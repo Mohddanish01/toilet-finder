@@ -19,6 +19,9 @@ import { getDistance } from "../utils/distance";
 
 import L from "leaflet";
 import "leaflet.awesome-markers";
+import {
+  useLocation
+} from "../context/LocationContext";
 
 const userIcon = L.AwesomeMarkers.icon({
   icon: "user",
@@ -74,6 +77,62 @@ function FlyToLocation({ target }) {
   return null;
 
 }
+
+function FocusDemand({
+
+    focusDemand,
+
+    demandMarkerRefs
+
+  }) {
+
+    const map = useMap();
+
+    useEffect(() => {
+
+      if (!focusDemand) return;
+
+      map.flyTo(
+
+        [
+
+          focusDemand.lat,
+
+          focusDemand.lng
+
+        ],
+
+        17,
+
+        {
+
+          duration: 1
+
+        }
+
+      );
+
+      setTimeout(() => {
+
+        demandMarkerRefs.current[
+          focusDemand.id
+        ]?.openPopup();
+
+      }, 1000);
+
+    }, [
+
+      focusDemand,
+
+      map,
+
+      demandMarkerRefs
+
+    ]);
+
+    return null;
+
+  }
 
 
 function FitNearby({ currentLocation, toilets, demands }) {
@@ -194,7 +253,7 @@ function MapClickHandler({ setSelectedLocation }) {  // coordinates autofill ke 
 }
 
 
-function MapView({ toilets, demands, position, locationEnabled, setLocationEnabled, handleDemandVote, enableLocationSelection = false}) {
+function MapView({ toilets, demands, position, locationEnabled, setLocationEnabled, handleDemandVote, focusDemand,enableLocationSelection = false}) {
 
   // const [selectedPosition, setSelectedPosition] = useState(null);
   if (!position) {
@@ -225,9 +284,33 @@ function MapView({ toilets, demands, position, locationEnabled, setLocationEnabl
 
   }
   const markerRef = useRef(null);
+  const demandMarkerRefs = useRef({});
   const { user } = useAuth();
 
-  const [currentLocation, setCurrentLocation] = useState(null);
+  const {
+    currentLocation,
+    setCurrentLocation
+  } = useLocation();
+
+    useEffect(() => {
+
+    if (focusDemand && !locationEnabled) {
+
+      setCurrentLocation({
+        lat: position.lat,
+        lng: position.lng
+      });
+
+      setLocationEnabled(true);
+
+    }
+
+  }, [
+    focusDemand,
+    locationEnabled,
+    position,
+    setLocationEnabled
+  ]);
 
   // const [locationEnabled, setLocationEnabled] = useState(false);
 
@@ -291,10 +374,21 @@ function MapView({ toilets, demands, position, locationEnabled, setLocationEnabl
 
         <FlyToLocation target={currentLocation} />
 
-        <FitNearby
-          currentLocation={currentLocation}
-          toilets={toilets}
-          demands={demands}
+        {
+          !focusDemand && (
+
+            <FitNearby
+              currentLocation={currentLocation}
+              toilets={toilets}
+              demands={demands}
+            />
+
+          )
+        }
+
+        <FocusDemand
+          focusDemand={focusDemand}
+          demandMarkerRefs={demandMarkerRefs}
         />
 
         {
@@ -424,6 +518,15 @@ function MapView({ toilets, demands, position, locationEnabled, setLocationEnabl
 
           <Marker
             key={demand._id}
+            ref={(ref) => {
+
+              if (ref) {
+
+                demandMarkerRefs.current[demand._id] = ref;
+
+              }
+
+            }}
             position={[
               demand.location.coordinates[1],
               demand.location.coordinates[0]

@@ -200,40 +200,6 @@ function AddToilet() {
 
   };
 
-  // const handleSubmit = async (e) => {
-
-  //   e.preventDefault();
-
-  //   try {
-
-  //     await api.post(
-  //       "/toilets",
-  //       {
-  //         name,
-  //         address,
-  //         lat: Number(lat),
-  //         lng: Number(lng),
-  //         facilities,
-  //         isFree,
-  //         openingHours
-  //       }
-  //     );
-
-  //     alert("Toilet Added");
-
-  //     navigate("/");
-
-  //   } catch (error) {
-
-  //     console.log(error);
-
-  //     alert(
-  //       error.response?.data?.message ||
-  //       "Failed to add toilet"
-  //     );
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
 
     e.preventDefault();

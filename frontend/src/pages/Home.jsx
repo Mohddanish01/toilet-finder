@@ -5,16 +5,24 @@ import api from "../api/axios";
 import ToiletCard from "../components/ToiletCard";
 import DemandCard from "../components/DemandCard";
 import MapView from "../components/MapView";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import HeroSection from "../components/HeroSection";
 import QuickActions from "../components/QuickActions";
+import {
+  useLocation as useLocationContext
+} from "../context/LocationContext";
 
 function Home() {
 
   const [toilets, setToilets] = useState([]);
   const [demands, setDemands] = useState([]);
   const [position, setPosition] = useState(null);
-  const [locationEnabled, setLocationEnabled] = useState(false);
+  const {
+    currentLocation,
+    setCurrentLocation,
+    locationEnabled,
+    setLocationEnabled
+  } = useLocationContext();
 
   const handleDemandVote = async (id) => {
 
@@ -41,6 +49,17 @@ function Home() {
 
   };
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+
+  if (location.state?.focusDemand) {
+
+    window.history.replaceState({}, "");
+
+  }
+
+}, [location]);
 
   useEffect(() => {
 
@@ -156,28 +175,6 @@ function Home() {
 
             </div>
 
-            {/* <div className="mb-8 flex items-center justify-between">
-
-              <div>
-
-                <h2 className="text-4xl font-bold text-slate-900">
-                  Explore Nearby Toilets
-                </h2>
-
-                <p className="text-slate-500 mt-2">
-                  View nearby public toilets and community demands on the interactive map.
-                </p>
-
-              </div>
-
-              <button
-                className="hidden md:block border border-slate-300 px-5 py-2 rounded-xl hover:bg-slate-100 transition"
-              >
-                Full Map →
-              </button>
-
-            </div> */}
-
             <div className="bg-white rounded-3xl shadow-md border border-slate-200 p-4">
 
               <MapView
@@ -187,6 +184,7 @@ function Home() {
                 locationEnabled={locationEnabled}
                 setLocationEnabled={setLocationEnabled}
                 handleDemandVote={handleDemandVote}
+                focusDemand={location.state?.focusDemand}
               />
 
             </div>

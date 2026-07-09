@@ -9,14 +9,26 @@ const LocationContext = createContext();
 export function LocationProvider({ children }) {
 
   const [selectedLocation, setSelectedLocation] =
+  useState(null);
+
+  const [currentLocation, setCurrentLocation] =
     useState(null);
+
+  const [locationEnabled, setLocationEnabled] =
+    useState(false);
 
   return (
 
     <LocationContext.Provider
       value={{
         selectedLocation,
-        setSelectedLocation
+        setSelectedLocation,
+
+        currentLocation,
+        setCurrentLocation,
+
+        locationEnabled,
+        setLocationEnabled
       }}
     >
 

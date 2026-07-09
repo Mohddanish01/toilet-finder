@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../api/axios";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import LoadingSkeleton from "../components/LoadingSkeleton";
 
 function OwnerDashboard() {
 
@@ -59,7 +60,7 @@ function OwnerDashboard() {
 
   if (!dashboard) {
 
-    return <h2>Loading Dashboard...</h2>;
+    return <LoadingSkeleton />;
 
   }
 
@@ -408,21 +409,6 @@ function OwnerDashboard() {
 
                     <div className="flex justify-between items-start gap-5">
 
-                    {/* <div>
-
-                      <h3 className="text-2xl font-bold text-slate-900">
-
-                        🚻 {toilet.name}
-
-                      </h3>
-
-                      <p className="text-slate-500 mt-2">
-
-                        📍 {toilet.address}
-
-                      </p>
-
-                    </div> */}
                     <div className="flex gap-5">
 
                       {
@@ -520,86 +506,7 @@ function OwnerDashboard() {
 
             )
           }
-        {/* <div
-            style={{
-                flex: 1,
-                position: "sticky",
-                top: "20px"
-            }}
-            >
 
-            <h2>Overview</h2>
-
-            <div
-                style={{
-                border: "1px solid #ccc",
-                borderRadius: "10px",
-                padding: "20px",
-                marginBottom: "15px",
-                textAlign: "center"
-                }}
-            >
-                <h3>🚻 Total Toilets</h3>
-                <p>Owned by you</p>
-                <h1>{dashboard.totalToilets}</h1>
-            </div>
-
-            <div
-                style={{
-                border: "1px solid #ccc",
-                borderRadius: "10px",
-                padding: "20px",
-                marginBottom: "15px",
-                textAlign: "center"
-                }}
-            >
-                <h3>⭐ Average Rating</h3>
-                <p>Community Rating</p>
-                <h1>{dashboard.averageRating}</h1>
-            </div>
-
-            <div
-                style={{
-                border: "1px solid #ccc",
-                borderRadius: "10px",
-                padding: "20px",
-                marginBottom: "15px",
-                textAlign: "center"
-                }}
-            >
-                <h3>📝 Total Reviews</h3>
-                <p>User Reviews</p>
-                <h1>{dashboard.totalReviews}</h1>
-            </div>
-
-            <div
-                style={{
-                border: "1px solid #ccc",
-                borderRadius: "10px",
-                padding: "20px",
-                marginBottom: "15px",
-                textAlign: "center"
-                }}
-            >
-                <h3>🚨 Open Issues</h3>
-                <p>Need Attention</p>
-                <h1>{dashboard.openIssues}</h1>
-            </div>
-
-            <div
-                style={{
-                border: "1px solid #ccc",
-                borderRadius: "10px",
-                padding: "20px",
-                textAlign: "center"
-                }}
-            >
-                <h3>✅ Resolved Issues</h3>
-                <p>Successfully Fixed</p>
-                <h1>{dashboard.resolvedIssues}</h1>
-            </div>
-
-            </div> */}
 
       </div>
 
