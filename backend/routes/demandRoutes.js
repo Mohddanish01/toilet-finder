@@ -4,7 +4,8 @@ import {
   createDemand,
   getAllDemands,
   voteDemand,
-  getMyDemands
+  getMyDemands,
+  deleteDemand
 } from "../controllers/demandController.js";
 
 import { protect }
@@ -33,6 +34,12 @@ router.get(
   "/my",
   protect,
   getMyDemands
+);
+
+router.delete(
+  "/:id",
+  protect,
+  deleteDemand
 );
 
 export default router;

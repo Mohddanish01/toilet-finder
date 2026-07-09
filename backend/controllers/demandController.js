@@ -21,10 +21,22 @@ export const createDemand = async (
     });
 
     if (existingDemand) {
-        return res.status(400).json({
-            message:
-            "Demand already exists nearby. Please vote instead."
-        });
+
+      return res.status(400).json({
+
+        message:
+          "A similar demand already exists nearby.",
+
+        demand: {
+          id: existingDemand._id,
+          address: existingDemand.address,
+          votes: existingDemand.votes,
+          lat: existingDemand.location.coordinates[1],
+          lng: existingDemand.location.coordinates[0]
+        }
+
+      });
+
     }
 
     const demand =
@@ -121,7 +133,9 @@ export const getMyDemands = async (
 
     const demands = await Demand.find({
       created_by: req.user._id
-    }).sort({ createdAt: -1 });
+    })
+    .sort({ createdAt: -1 })
+    .populate("created_by", "name");
 
     res.status(200).json(demands);
 
@@ -130,4 +144,41 @@ export const getMyDemands = async (
       message: error.message
     });
   }
+};
+
+export const deleteDemand = async (req, res) => {
+
+  try {
+
+    const demand = await Demand.findById(req.params.id);
+
+    if (!demand) {
+      return res.status(404).json({
+        message: "Demand not found"
+      });
+    }
+
+    if (
+      demand.created_by.toString() !==
+      req.user._id.toString()
+    ) {
+      return res.status(403).json({
+        message: "Not authorized"
+      });
+    }
+
+    await demand.deleteOne();
+
+    res.status(200).json({
+      message: "Demand deleted successfully"
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: error.message
+    });
+
+  }
+
 };

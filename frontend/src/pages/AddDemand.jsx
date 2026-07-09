@@ -93,58 +93,184 @@ function AddDemand() {
         address
       });
 
-      alert("Demand Created Successfully");
+      alert(
+        "🎉 Demand submitted successfully!"
+      );
 
       navigate("/");
 
     } catch (error) {
 
-      alert(
-        error.response?.data?.message ||
-        "Failed to create demand"
-      );
+        console.log(error.response?.data);
 
-    }
+        if (error.response?.data?.demand) {
+
+          const existingDemand =
+            error.response.data.demand;
+
+          const goToDemand =
+            window.confirm(
+
+      `A similar demand already exists nearby.
+
+      Address:
+      ${existingDemand.address}
+
+      Supporters:
+      ${existingDemand.votes}
+
+      Press OK to view this demand.`
+
+            );
+
+          if (goToDemand) {
+
+            // Next step me yahan map navigation karenge
+
+            console.log(existingDemand);
+
+          }
+
+          return;
+
+        }
+
+        alert(
+
+          error.response?.data?.message ||
+
+          "Failed to create demand"
+
+        );
+
+      }
 
   };
 
   return (
 
-    <div>
+    <div className="bg-slate-50 min-h-screen">
 
-      <h1>Request Public Toilet</h1>
+    <div className="max-w-4xl mx-auto px-6 py-10">
 
-      <form onSubmit={handleSubmit}>
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
 
-        <input
+        <h1 className="text-4xl font-bold text-slate-900">
+
+          🚧 Request a Public Toilet
+
+        </h1>
+
+        <p className="text-slate-500 mt-2">
+
+          Help your community by requesting a public toilet where it's needed most.
+
+        </p>
+
+      </div>
+
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8"
+      >
+        <h2 className="text-2xl font-bold text-slate-900 mb-6">
+
+        📍 Selected Location
+
+        </h2>
+
+        <div className="flex flex-wrap gap-4 mb-6">
+
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl transition"
+          >
+
+            📍 Refresh Current Location
+
+          </button>
+
+        </div>
+
+        <div className="mb-6">
+
+          <label className="block font-semibold text-slate-700 mb-2">
+
+          Address
+
+          </label>
+
+          <input
           type="text"
           value={address}
           readOnly
-        />
+          className="w-full border border-slate-300 rounded-xl px-4 py-3 bg-slate-50"
+          />
 
-        <br /><br />
+        </div>
 
-        <input
-          type="number"
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+
+          <div>
+
+          <label className="block font-semibold text-slate-700 mb-2">
+
+          Latitude
+
+          </label>
+
+          <input
+          type="text"
           value={lat}
           readOnly
-        />
+          className="w-full border border-slate-300 rounded-xl px-4 py-3 bg-slate-50"
+          />
 
-        <br /><br />
+          </div>
 
-        <input
-          type="number"
+          <div>
+
+          <label className="block font-semibold text-slate-700 mb-2">
+
+          Longitude
+
+          </label>
+
+          <input
+          type="text"
           value={lng}
           readOnly
-        />
+          className="w-full border border-slate-300 rounded-xl px-4 py-3 bg-slate-50"
+          />
 
-        <br /><br />
+          </div>
 
-        <button type="submit">
-          Submit Demand
+        </div>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5 mb-8">
+
+          <p className="text-blue-800">
+
+          💡 Your request will be visible to other users.
+          If more people support the same location, it helps identify areas that need a public toilet.
+
+          </p>
+
+        </div>
+
+        <button
+          type="submit"
+          className="w-full bg-red-500 hover:bg-red-600 text-white py-4 rounded-2xl font-semibold text-lg transition"
+        >
+
+          🚧 Submit Demand
+
         </button>
 
       </form>
+
+    </div>
 
     </div>
 
