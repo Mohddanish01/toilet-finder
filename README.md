@@ -1,125 +1,296 @@
-# Toilet Finder 🚽
+# 🚻 PublicLoo
 
-A location-based public toilet finder and cleanliness rating platform.
+### Community-Powered Public Toilet Finder
 
-## Overview
+PublicLoo is a modern community-powered web application that helps users discover nearby public toilets, contribute new toilet locations, and request toilets in underserved areas through interactive maps and community voting.
 
-Toilet Finder helps users locate nearby public toilets, view ratings and reviews, and contribute to improving public sanitation through community-driven feedback.
+---
 
-## Features Implemented
+## 🌟 Features
 
-### Authentication & Security
+### 🚽 Find Nearby Toilets
+- Discover public toilets near your current location
+- Interactive map powered by Leaflet
+- Distance calculation from your location
+- View toilet details and amenities
+- Google Maps navigation support
 
-* User Signup
-* User Login
-* JWT Authentication
-* Protected Routes
-* Password Hashing using bcryptjs
+### ➕ Add Public Toilets
+- Add verified public toilet locations
+- Select location from interactive map
+- Upload multiple images
+- Add facilities like:
+  - Male
+  - Female
+  - Wheelchair Accessible
+  - Drinking Water
+  - Tissue Paper
+- Opening hours
+- Free / Paid information
 
-### Toilet Management
+### 🚧 Community Toilet Demands
+- Request toilets in areas where none exist
+- Duplicate demand detection within 100 meters
+- Community voting system
+- Demand statistics dashboard
+- Delete your own demands
+- Automatically navigate to an existing nearby demand if one already exists
 
-* Add New Toilet
-* Get All Toilets
-* Get Toilet By ID
-* Find Nearby Toilets using Geo Queries
-* Protected Toilet Creation
-* Track Toilet Creator
+### ⭐ Reviews & Ratings
+- Add reviews
+- Give ratings
+- Average rating calculation
+- Prevent duplicate reviews by the same user
 
-### Review System
+### 👤 Authentication
+- JWT Authentication
+- Secure Login & Signup
+- Protected Routes
+- User Dashboard
 
-* Add Review
-* Get Reviews by Toilet
-* Update Review
-* Delete Review
-* Prevent Duplicate Reviews
-* Review Ownership Verification
+### 🗺 Interactive Map
+- Live location detection
+- Marker clustering
+- Current location marker
+- Toilet markers
+- Demand markers
+- Popup information
+- Auto-focus on selected demand
+- Smooth map navigation
 
-### Rating System
+### 📊 Dashboard
+- Total toilets added
+- Total reviews
+- Average ratings
+- Manage your contributions
 
-* Automatic Average Rating Calculation
-* Automatic Review Count Tracking
-* Centralized Rating Update Helper
+---
 
-### Validation
+# 🛠 Tech Stack
 
-* Toilet Request Validation
-* Review Request Validation
-* Proper Error Responses
+## Frontend
+- React.js
+- React Router DOM
+- Tailwind CSS
+- Axios
+- React Leaflet
+- Lucide React
+- React Icons
 
-### Database
+## Backend
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- JWT Authentication
+- Multer
 
-* MongoDB
-* Mongoose ODM
-* GeoJSON Location Storage
-* 2dsphere Index for Location Queries
+## Maps & APIs
+- OpenStreetMap
+- Leaflet
+- Nominatim Reverse Geocoding API
 
-## Tech Stack
+---
 
-### Backend
+# ✨ Key Features Implemented
 
-* Node.js
-* Express.js
-* MongoDB
-* Mongoose
+- JWT Authentication
+- GeoSpatial Search
+- GeoJSON Location Storage
+- Nearby Toilet Search
+- Reverse Geocoding
+- Image Upload
+- Community Voting
+- Duplicate Demand Detection
+- Interactive Maps
+- Responsive Design
+- Protected Routes
+- Dashboard Analytics
+- Reviews & Ratings
+- Auto Map Navigation
+- Location Persistence
 
-### Authentication
+---
 
-* JWT (jsonwebtoken)
-* bcryptjs
+# 📂 Project Structure
 
-### Validation
+```
+publicloo/
+│
+├── frontend/
+│   ├── src/
+│   ├── components/
+│   ├── pages/
+│   ├── context/
+│   ├── utils/
+│   └── assets/
+│
+├── backend/
+│   ├── config/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── models/
+│   ├── routes/
+│   ├── uploads/
+│   └── server.js
+│
+└── README.md
+```
 
-* express-validator
+---
 
-### Testing
+# 🚀 Installation
 
-* Postman
+## Clone Repository
 
-## API Endpoints
+```bash
+git clone https://github.com/Mohddanish01/toilet-finder.git
+```
 
-### Authentication
+## Backend
 
-* POST /api/auth/signup
-* POST /api/auth/login
-* GET /api/auth/me
+```bash
+cd backend
+npm install
+```
 
-### Toilets
+Create a `.env` file
 
-* POST /api/toilets
-* GET /api/toilets
-* GET /api/toilets/nearby
-* GET /api/toilets/:id
+```env
+PORT=5000
+MONGO_URI=YOUR_MONGODB_URI
+JWT_SECRET=YOUR_SECRET_KEY
+```
 
-### Reviews
+Run backend
 
-* POST /api/reviews
-* GET /api/reviews/:toiletId
-* PUT /api/reviews/:id
-* DELETE /api/reviews/:id
+```bash
+npm run dev
+```
 
-## Project Structure
+---
 
-backend/
-├── config/
-├── controllers/
-├── middleware/
-├── models/
-├── routes/
-├── utils/
-├── validations/
-└── server.js
+## Frontend
 
-## Future Features
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-* React Frontend
-* Progressive Web App (PWA)
-* Interactive Maps
-* Toilet Demand Heatmap
-* Admin Dashboard
-* Role-Based Authorization
-* Image Uploads
-* Complaint Management System
+---
 
-## Author
+# 📍 How It Works
 
-Mohd Danish
+### Finding Toilets
+
+```
+User Location
+      ↓
+GeoSpatial Query
+      ↓
+Nearby Toilets
+      ↓
+Interactive Map
+```
+
+---
+
+### Creating a Demand
+
+```
+Current Location
+       ↓
+Check Nearby Demands (100m)
+       ↓
+Already Exists?
+     /        \
+   Yes         No
+   ↓            ↓
+Navigate     Create Demand
+to Existing
+Demand
+```
+
+---
+
+### Community Voting
+
+```
+User
+ ↓
+Vote
+ ↓
+Duplicate Vote Check
+ ↓
+Update Vote Count
+```
+
+---
+
+# 📱 Screenshots
+
+Add screenshots here.
+
+Example:
+
+```
+Home Page
+
+Dashboard
+
+Map View
+
+Toilet Details
+
+Add Toilet
+
+Add Demand
+
+My Demands
+
+Login
+
+Signup
+```
+
+---
+
+# 🔒 Security
+
+- JWT Authentication
+- Protected APIs
+- User Authorization
+- Duplicate Review Prevention
+- Duplicate Vote Prevention
+- Duplicate Demand Detection
+
+---
+
+# 💡 Future Improvements
+
+- Toast Notifications
+- AI-based Toilet Cleanliness Prediction
+- Real-time Notifications
+- Admin Dashboard
+- Offline PWA Support
+- Route Optimization
+- Heatmap Visualization
+- Public Toilet Availability Status
+
+---
+
+## 🌍 Vision
+
+PublicLoo aims to make public sanitation more accessible by enabling communities to discover, contribute, and improve public toilet availability through collaborative mapping and real-time feedback.
+
+# 👨‍💻 Author
+
+**Mohd Danish**
+
+GitHub:
+https://github.com/Mohddanish01
+
+---
+
+# ⭐ If you found this project useful, consider giving it a Star.
