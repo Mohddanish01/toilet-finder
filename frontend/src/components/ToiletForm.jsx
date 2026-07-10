@@ -1,79 +1,4 @@
-// function ToiletForm({
 
-//   name,
-//   setName,
-
-//   address,
-//   setAddress,
-
-//   lat,
-//   setLat,
-
-//   lng,
-//   setLng,
-
-//   facilities,
-//   setFacilities,
-
-//   isFree,
-//   setIsFree,
-
-//   openingHours,
-//   setOpeningHours,
-
-//   handleCurrentLocation,
-
-//   showMap,
-//   setShowMap,
-
-//   handleSubmit
-
-// }) {
-
-//   return (
-
-//     <form onSubmit={handleSubmit}>
-
-//       <h2>Toilet Form</h2>
-
-//       <input
-//         type="text"
-//         placeholder="Toilet Name"
-//         value={name}
-//         onChange={(e) =>
-//           setName(e.target.value)
-//         }
-//       />
-
-//       <br /><br />
-
-//       <button
-//         type="button"
-//         onClick={handleCurrentLocation}
-//       >
-
-//         📍 Use My Current Location
-
-//       </button>
-
-//       <br /><br />
-
-//       <button
-//         type="button"
-//         onClick={() => setShowMap(true)}
-//       >
-//         🗺️ Select From Map
-//       </button>
-
-//       <br /><br />
-
-//     </form>
-
-//   );
-
-// }
-
-// export default ToiletForm;
 
 function ToiletForm({
 
@@ -113,6 +38,8 @@ function ToiletForm({
   handleCurrentLocation,
 
   setShowMap,
+
+  mapRef,
 
   handleSubmit
 
@@ -183,10 +110,28 @@ function ToiletForm({
 
           <button
             type="button"
-            onClick={() => setShowMap(true)}
+            onClick={() => {
+
+              setShowMap(true);
+
+              setTimeout(() => {
+
+                mapRef.current?.scrollIntoView({
+
+                  behavior: "smooth",
+
+                  block: "center"
+
+                });
+
+              }, 100);
+
+            }}
             className="bg-slate-700 hover:bg-slate-800 text-white px-5 py-2 rounded-xl transition"
           >
+
             🗺 Select From Map
+
           </button>
 
         </div>

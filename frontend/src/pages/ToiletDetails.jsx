@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function ToiletDetails() {
 
@@ -133,7 +134,7 @@ function ToiletDetails() {
     e.preventDefault();
 
       if (!comment.trim()) {
-        alert("Please write a review");
+        toast("Please write a review");
         return;
       }
 
@@ -179,7 +180,7 @@ function ToiletDetails() {
 
       console.log(error);
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
         "Failed to add review"
       );
@@ -191,7 +192,7 @@ function ToiletDetails() {
     e.preventDefault();
 
     if (!issueDescription.trim()) {
-      alert("Please describe the issue");
+      toast("Please describe the issue");
       return;
     }
 
@@ -207,7 +208,7 @@ function ToiletDetails() {
 
       });
 
-      alert("Issue reported successfully");
+      toast.success("Issue reported successfully");
 
       setIssueType("Dirty");
       setIssueDescription("");
@@ -218,7 +219,7 @@ function ToiletDetails() {
 
       console.log(error);
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
         "Failed to report issue"
       );
@@ -241,7 +242,7 @@ function ToiletDetails() {
 
       await api.delete(`/toilets/${id}`);
 
-      alert("Toilet deleted successfully");
+      toast.success("Toilet deleted successfully");
 
       navigate("/");
 
@@ -249,7 +250,7 @@ function ToiletDetails() {
 
       console.log(error);
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
         "Failed to delete toilet"
       );
@@ -268,7 +269,7 @@ function ToiletDetails() {
 
     });
 
-    alert("Issue marked as resolved");
+    toast.success("Issue marked as resolved");
 
     fetchIssues();
 
@@ -276,7 +277,7 @@ function ToiletDetails() {
 
     console.log(error);
 
-    alert(
+    toast.error(
       error.response?.data?.message ||
       "Failed to update issue"
     );
@@ -317,7 +318,7 @@ function ToiletDetails() {
 
     } catch (error) {
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
         "Failed to update review."
       );
@@ -342,7 +343,7 @@ function ToiletDetails() {
 
     } catch (error) {
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
         "Failed to delete review."
       );

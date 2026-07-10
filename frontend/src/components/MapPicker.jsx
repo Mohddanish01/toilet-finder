@@ -1,5 +1,15 @@
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
-import { useState } from "react";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  useMapEvents,
+  useMap
+} from "react-leaflet";
+
+import {
+  useState,
+  useEffect
+} from "react";
 
 function LocationMarker({ onLocationSelect, selectable}) {
 
@@ -28,6 +38,26 @@ function LocationMarker({ onLocationSelect, selectable}) {
 
 }
 
+function ResizeMap() {
+
+  const map = useMap();
+
+  useEffect(() => {
+
+    const timer = setTimeout(() => {
+
+      map.invalidateSize();
+
+    }, 150);
+
+    return () => clearTimeout(timer);
+
+  }, [map]);
+
+  return null;
+
+}
+
 function MapPicker({ onLocationSelect, center, selectable = false}) {
 
   return (
@@ -35,12 +65,10 @@ function MapPicker({ onLocationSelect, center, selectable = false}) {
     <MapContainer
       center={center}
       zoom={13}
-      style={{
-        height: "400px",
-        width: "100%",
-        marginTop: "20px"
-      }}
+      className="h-[400px] w-full"
     >
+
+      <ResizeMap />
 
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

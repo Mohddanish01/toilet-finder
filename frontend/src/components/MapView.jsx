@@ -92,13 +92,32 @@ function FocusDemand({
 
       if (!focusDemand) return;
 
+      // map.flyTo(
+
+      //   [
+
+      //     focusDemand.lat,
+
+      //     focusDemand.lng
+
+      //   ],
+
+      //   17,
+
+      //   {
+
+      //     duration: 1
+
+      //   }
+
+      // );
       map.flyTo(
 
         [
 
-          focusDemand.lat,
+          focusDemand.location.coordinates[1],
 
-          focusDemand.lng
+          focusDemand.location.coordinates[0]
 
         ],
 
@@ -115,7 +134,7 @@ function FocusDemand({
       setTimeout(() => {
 
         demandMarkerRefs.current[
-          focusDemand.id
+          focusDemand._id
         ]?.openPopup();
 
       }, 1000);
@@ -338,7 +357,7 @@ function MapView({ toilets, demands, position, locationEnabled, setLocationEnabl
 
       () => {
 
-        alert("Unable to get your location.");
+        toast.error("Unable to get your location.");
 
       }
 

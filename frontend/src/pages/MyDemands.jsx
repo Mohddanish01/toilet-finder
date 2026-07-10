@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import {Link} from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
 function MyDemands() {
 
   const [demands, setDemands] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
 
@@ -259,14 +260,18 @@ function MyDemands() {
 
                   <div className="flex gap-2">
 
-                    <a
-                      href={`https://www.google.com/maps?q=${demand.location.coordinates[1]},${demand.location.coordinates[0]}`}
-                      target="_blank"
-                      rel="noreferrer"
+                    <button
+                      onClick={() =>
+                        navigate("/", {
+                          state: {
+                            focusDemand: demand,
+                          },
+                        })
+                      }
                       className="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-xl transition"
                     >
                       🧭 View
-                    </a>
+                    </button>
 
                     <button
                       onClick={() =>

@@ -1,9 +1,10 @@
-import { useState, useEffect  } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { useLocation } from "../context/LocationContext";
 import MapPicker from "../components/MapPicker";
 import ToiletForm from "../components/ToiletForm";
+import toast from "react-hot-toast";
 
 function AddToilet() {
 
@@ -29,6 +30,7 @@ function AddToilet() {
   console.log("Selected Location:",selectedLocation);
 
   const [showMap, setShowMap] = useState(false);
+  const mapRef = useRef(null);
   const [currentLocation, setCurrentLocation] = useState([
     28.6139,
     77.2090
@@ -139,7 +141,7 @@ function AddToilet() {
 
         console.log(error);
 
-        alert("Unable to get current location.");
+        toast.error("Unable to get current location.");
 
       }
 
@@ -236,7 +238,7 @@ function AddToilet() {
         formData
       );
 
-      alert("Toilet Added");
+      toast.success("Toilet Added");
 
       navigate("/");
 
@@ -247,7 +249,7 @@ function AddToilet() {
       console.log(error);
 
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
         "Failed to add toilet"
       );
@@ -295,17 +297,65 @@ function AddToilet() {
         handleCurrentLocation={handleCurrentLocation}
 
         setShowMap={setShowMap}
+        mapRef={mapRef}
 
         handleSubmit={handleSubmit}
       />
 
       {
         showMap && (
-          <MapPicker
-              center={currentLocation}
-              onLocationSelect={handleMapLocation}
-              selectable={true}
-          />
+
+          <div
+            ref={mapRef}
+            className="max-w-6xl mx-auto px-6 pb-10"
+          >
+
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-4">
+
+              <div className="flex justify-between items-center">
+
+                <div>
+
+                  <h2 className="text-2xl font-bold">
+
+                    📍 Select Toilet Location
+
+                  </h2>
+
+                  <p className="text-slate-500 mt-1">
+
+                    Click anywhere on the map to choose the location.
+
+                  </p>
+
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setShowMap(false)}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl"
+                >
+
+                  ✕
+
+                </button>
+
+              </div>
+
+            </div>
+
+            <div className="rounded-2xl overflow-hidden shadow-lg border border-slate-200">
+
+              <MapPicker
+                center={currentLocation}
+                onLocationSelect={handleMapLocation}
+                selectable={true}
+              />
+
+            </div>
+
+          </div>
+
         )
       }
 

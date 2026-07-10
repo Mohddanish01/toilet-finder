@@ -1,57 +1,3 @@
-// import { Link } from "react-router-dom";
-// import { useAuth } from "../context/AuthContext";
-
-// function Navbar() {
-
-//   const { user, logout } = useAuth();
-
-//   return (
-//     <nav className="bg-blue-600 text-white p-4">
-
-//       <Link to="/">Home</Link>
-
-//       {" | "}
-
-//       {!user ? (
-//         <>
-//           <Link to="/login">Login</Link>
-
-//           {" | "}
-
-//           <Link to="/signup">Signup</Link>
-//         </>
-//       ) : (
-//         <>
-//           <Link to="/add-toilet">
-//             Add Toilet
-//           </Link>
-
-//           {" | "}
-
-//           <Link to="/my-demands">
-//             My Demands
-//           </Link>
-
-//           {" | "}
-
-//           <span>
-//             {user.name}
-//           </span>
-
-//           {" | "}
-
-//           <button onClick={logout}>
-//             Logout
-//           </button>
-//         </>
-//       )}
-
-//     </nav>
-//   );
-// }
-
-// export default Navbar;
-
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { MapPinned, PlusCircle, LayoutDashboard, Flag, LogOut, User } from "lucide-react";
@@ -59,6 +5,13 @@ import { MapPinned, PlusCircle, LayoutDashboard, Flag, LogOut, User } from "luci
 function Navbar() {
 
   const { user, logout } = useAuth();
+
+  const navLinkClass = ({ isActive }) =>
+  `px-4 py-2 rounded-xl font-medium transition ${
+    isActive
+      ? "bg-blue-600 text-white shadow-md"
+      : "text-slate-600 hover:text-blue-600 hover:bg-slate-100"
+  }`;
 
   return (
 
@@ -70,7 +23,7 @@ function Navbar() {
 
           {/* Logo */}
 
-          <Link
+          <NavLink
             to="/"
             className="flex items-center gap-2"
           >
@@ -96,7 +49,7 @@ function Navbar() {
 
             </div>
 
-          </Link>
+          </NavLink>
 
           {/* Navigation */}
 
@@ -104,16 +57,9 @@ function Navbar() {
 
             <NavLink
               to="/"
-              className="text-slate-600 hover:text-blue-600 transition"
+              className={navLinkClass}
             >
               Home
-            </NavLink>
-
-            <NavLink
-              to="/map"
-              className="text-slate-600 hover:text-blue-600 transition"
-            >
-              Explore Map
             </NavLink>
 
             {
@@ -121,21 +67,28 @@ function Navbar() {
                 <>
                   <NavLink
                     to="/add-toilet"
-                    className="text-slate-600 hover:text-blue-600 transition"
+                    className={navLinkClass}
                   >
                     Add Toilet
                   </NavLink>
 
                   <NavLink
+                    to="/add-demand"
+                    className={navLinkClass}
+                  >
+                    Add Demand
+                  </NavLink>
+
+                  <NavLink
                     to="/dashboard"
-                    className="text-slate-600 hover:text-blue-600 transition"
+                    className={navLinkClass}
                   >
                     Dashboard
                   </NavLink>
 
                   <NavLink
                     to="/my-demands"
-                    className="text-slate-600 hover:text-blue-600 transition"
+                    className={navLinkClass}
                   >
                     My Demands
                   </NavLink>
@@ -152,19 +105,19 @@ function Navbar() {
 
               <div className="flex gap-3">
 
-                <Link
+                <NavLink
                   to="/login"
-                  className="px-5 py-2 rounded-xl border border-slate-300 hover:bg-slate-100 transition"
+                  className={navLinkClass}
                 >
                   Login
-                </Link>
+                </NavLink>
 
-                <Link
+                <NavLink
                   to="/signup"
-                  className="px-5 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition"
+                  className={navLinkClass}
                 >
                   Signup
-                </Link>
+                </NavLink>
 
               </div>
 

@@ -7,6 +7,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet.awesome-markers/dist/leaflet.awesome-markers.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import {LocationProvider} from "./context/LocationContext";
+import { Toaster } from "react-hot-toast";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -15,6 +16,19 @@ createRoot(document.getElementById('root')).render(
         <AuthProvider>
 
             <App/>
+
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 3000,
+                style: {
+                  borderRadius: "12px",
+                  background: "#fff",
+                  color: "#111827",
+                  fontWeight: "500"
+                }
+              }}
+            />
 
         </AuthProvider>
 

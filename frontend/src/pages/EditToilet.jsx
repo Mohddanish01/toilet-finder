@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../api/axios";
 import ToiletForm from "../components/ToiletForm";
+import toast from "react-hot-toast";
 
 function EditToilet() {
 
@@ -93,13 +94,13 @@ function EditToilet() {
 
         setImages(res.data.images);
 
-        alert("Image deleted successfully");
+        toast.success("Image deleted successfully");
 
       } catch (error) {
 
         console.log(error);
 
-        alert(
+        toast.error(
           error.response?.data?.message ||
           "Failed to delete image"
         );
@@ -174,7 +175,7 @@ function EditToilet() {
 
         console.log(error);
 
-        alert(
+        toast.error(
 
           error.response?.data?.message ||
 

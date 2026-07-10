@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
+import toast from "react-hot-toast";
 
 function AddDemand() {
 
@@ -93,7 +94,7 @@ function AddDemand() {
         address
       });
 
-      alert(
+      toast.success(
         "🎉 Demand submitted successfully!"
       );
 
@@ -139,7 +140,7 @@ function AddDemand() {
 
         }
 
-        alert(
+        toast.error(
 
           error.response?.data?.message ||
 

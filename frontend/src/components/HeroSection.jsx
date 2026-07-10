@@ -1,13 +1,30 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, MapPinned } from "lucide-react";
+import heroImage from "../assets/heroSection.png";
 
-function HeroSection() {
+function HeroSection({ onFindNearby, onExploreMap, toilets, demands }) {
+
+  const totalToilets = toilets.length;
+
+  const totalDemands = demands.length;
+
+  const avgRating =
+    toilets.length
+      ? (
+          toilets.reduce(
+            (sum, toilet) =>
+              sum + (toilet.avg_rating || 0),
+            0
+          ) / toilets.length
+        ).toFixed(1)
+      : "0.0";
+
   return (
     <section className="bg-gradient-to-br from-slate-50 via-blue-50 to-emerald-50">
 
       <div className="max-w-7xl mx-auto px-6 py-20">
 
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
 
           {/* Left */}
 
@@ -44,21 +61,20 @@ function HeroSection() {
 
             <div className="flex gap-5 mt-10">
 
-              <Link
-                to="/"
+              <button
+                onClick={onFindNearby}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-7 py-4 rounded-xl font-semibold flex items-center gap-2 transition"
-                >
+              >
                 🚻 Find Nearby Toilets
-
                 <ArrowRight size={18} />
-              </Link>
+              </button>
 
-              <Link
-                to="/map"
+              <button
+                onClick={onExploreMap}
                 className="border border-slate-300 hover:bg-white px-7 py-4 rounded-xl font-semibold transition"
-                >
+              >
                 🗺 Explore Map
-              </Link>
+              </button>
 
             </div>
 
@@ -118,17 +134,15 @@ function HeroSection() {
 
           {/* Right */}
 
-            <div className="flex justify-center">
+            <div className="relative flex justify-center items-center">
 
-            <div className="w-[500px] h-[400px] rounded-3xl bg-white shadow-xl flex items-center justify-center">
+              <div className="absolute w-96 h-96 bg-blue-200 rounded-full blur-3xl opacity-30"></div>
 
-                <p className="text-slate-400">
-
-                Hero Illustration
-
-                </p>
-
-            </div>
+              <img
+                src={heroImage}
+                alt="Public Toilet Finder"
+                className="relative w-full max-w-[680px] object-contain drop-shadow-2xl"
+              />
 
             </div>
 

@@ -27,13 +27,15 @@ export const createDemand = async (
         message:
           "A similar demand already exists nearby.",
 
-        demand: {
-          id: existingDemand._id,
-          address: existingDemand.address,
-          votes: existingDemand.votes,
-          lat: existingDemand.location.coordinates[1],
-          lng: existingDemand.location.coordinates[0]
-        }
+        // demand: {
+        //   id: existingDemand._id,
+        //   address: existingDemand.address,
+        //   votes: existingDemand.votes,
+        //   lat: existingDemand.location.coordinates[1],
+        //   lng: existingDemand.location.coordinates[0]
+        // }
+
+        demand: existingDemand
 
       });
 

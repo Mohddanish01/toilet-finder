@@ -1,6 +1,6 @@
 
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import api from "../api/axios";
 import ToiletCard from "../components/ToiletCard";
 import DemandCard from "../components/DemandCard";
@@ -11,6 +11,7 @@ import QuickActions from "../components/QuickActions";
 import {
   useLocation as useLocationContext
 } from "../context/LocationContext";
+import toast from "react-hot-toast";
 
 function Home() {
 
@@ -40,7 +41,7 @@ function Home() {
 
     } catch (error) {
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
         "Failed to vote."
       );
@@ -49,17 +50,31 @@ function Home() {
 
   };
   const navigate = useNavigate();
+  const mapRef = useRef(null);
   const location = useLocation();
 
   useEffect(() => {
 
-  if (location.state?.focusDemand) {
+    if (location.state?.focusDemand) {
 
-    window.history.replaceState({}, "");
+      mapRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
 
-  }
+    }
 
-}, [location]);
+  }, [location.state]);
+
+//   useEffect(() => {
+
+//   if (location.state?.focusDemand) {
+
+//     window.history.replaceState({}, "");
+
+//   }
+
+// }, [location]);
 
   useEffect(() => {
 
@@ -154,10 +169,39 @@ function Home() {
 
   return (
     <>
-     <HeroSection />
+     <HeroSection
+
+        onFindNearby={() => {
+
+          mapRef.current?.scrollIntoView({
+
+            behavior: "smooth",
+
+            block: "start"
+
+          });
+
+        }}
+
+        onExploreMap={() => {
+
+          mapRef.current?.scrollIntoView({
+
+            behavior: "smooth",
+
+            block: "start"
+
+          });
+
+        }}
+
+        toilets={toilets}
+        demands={demands}
+
+      />
       <div className="bg-slate-50 min-h-screen">
 
-        <section className="max-w-7xl mx-auto px-6 py-12">
+        <section ref={mapRef} className="max-w-7xl mx-auto px-6 py-12">
 
             <div className="mb-8">
 
@@ -191,7 +235,7 @@ function Home() {
 
           </section>
 
-        <div className="max-w-7xl mx-auto px-6 mt-16 mb-8">
+        <div className="max-w-7xl mx-auto px-6 mt-8 mb-8">
 
           <h2 className="text-4xl font-bold text-slate-900">
 
@@ -210,7 +254,7 @@ function Home() {
         {
             !locationEnabled ? (
 
-              <div className="bg-white rounded-3xl shadow-md p-10 text-center max-w-xl mx-auto mt-10">
+              <div className="bg-white rounded-3xl shadow-md p-5 text-center max-w-xl mx-auto mt-10">
 
                 <h3 className="text-2xl font-bold text-slate-800">
 
@@ -277,7 +321,7 @@ function Home() {
           )
         }
 
-        <div className="max-w-7xl mx-auto px-6 mt-20">
+        <div className="max-w-7xl mx-auto px-6 mt-16">
 
         <h2 className="text-4xl font-bold">
 
@@ -294,7 +338,25 @@ function Home() {
         </div>
 
         {
-          demands.length === 0 ? (
+          !locationEnabled ? (
+
+            <div className="bg-white rounded-3xl shadow-md p-5 text-center max-w-xl mx-auto mt-10 mb-4">
+
+              <h3 className="text-2xl font-bold text-slate-800">
+
+                📍 Enable Your Location
+
+              </h3>
+
+              <p className="text-slate-500 mt-4">
+
+                Enable your location to view nearby community toilet demands.
+
+              </p>
+
+            </div>
+
+          ) : demands.length === 0 ? (
 
             <div className="bg-white rounded-3xl shadow-md p-10 text-center max-w-xl mx-auto mt-10">
 
